@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MembersZone - Gym Management Simplified</title>
+    <link rel="stylesheet" th:href="@{https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css}">
+    <style>
+        .hero {
+            background: url('hero-background.jpg') no-repeat center center;
+            background-size: cover;
+            color: white;
+            text-align: center;
+            padding: 100px 0;
+        }
+        .features, .how-it-works, .testimonials, .pricing, .contact {
+            padding: 50px 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" th:href="@{/}">MembersZone</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item"><a class="nav-link" th:href="@{/home}">Home</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/features}">Features</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/pricing}">Pricing</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/aboutus}">About Us</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/contactus}">Contact Us</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/login}">Login</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <div class="hero">
+        <h1>Welcome to MembersZone</h1>
+        <p>Gym Management Simplified</p>
+        <a th:href="@{/signup}" class="btn btn-primary btn-lg">Get Started</a>
+        <a th:href="@{/features}" class="btn btn-secondary btn-lg">Learn More</a>
+    </div>
+
+    <!-- Features Overview -->
+    <div class="features container text-center">
+        <h2>Our Features</h2>
+        <div class="row">
+            <div class="col-md-4">
+                <h3>Membership Management</h3>
+                <p>Manage member profiles, track memberships, handle renewals and cancellations easily.</p>
+            </div>
+            <div class="col-md-4">
+                <h3>Class Scheduling</h3>
+                <p>Create and manage class schedules, allowing members to book classes online.</p>
+            </div>
+            <div class="col-md-4">
+                <h3>Analytics and Reporting</h3>
+                <p>Gain insights into gym performance with detailed analytics and reports.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- How It Works -->
+    <div class="how-it-works container text-center">
+        <h2>How It Works</h2>
+        <p>Simple steps to get started with MembersZone:</p>
+        <ol>
+            <li>Sign Up</li>
+            <li>Set Up Your Gym Profile</li>
+            <li>Add Membership Plans and Classes</li>
+            <li>Invite Members</li>
+            <li>Manage and Track Your Gym's Performance</li>
+        </ol>
+    </div>
+
+    <!-- Testimonials -->
+    <div class="testimonials container text-center">
+        <h2>What Our Users Say</h2>
+        <blockquote class="blockquote">
+            <p class="mb-0">"MembersZone has revolutionized how we manage our gym. It's incredibly user-friendly and efficient."</p>
+            <footer class="blockquote-footer">Alice, <cite title="Source Title">Fit Gym Owner</cite></footer>
+        </blockquote>
+        <blockquote class="blockquote">
+            <p class="mb-0">"The analytics and reporting features are fantastic. We can make data-driven decisions easily."</p>
+            <footer class="blockquote-footer">Bob, <cite title="Source Title">Strong Gym Owner</cite></footer>
+        </blockquote>
+    </div>
+
+    <!-- Pricing Plans -->
+    <div class="pricing container text-center">
+        <h2>Pricing Plans</h2>
+        <div class="row">
+            <div class="col-md-4">
+                <h3>Basic</h3>
+                <p>$30/month</p>
+                <p>Access to gym</p>
+                <a th:href="@{/signup}" class="btn btn-primary">Sign Up</a>
+            </div>
+            <div class="col-md-4">
+                <h3>Premium</h3>
+                <p>$50/month</p>
+                <p>Access to gym + classes</p>
+                <a th:href="@{/signup}" class="btn btn-primary">Sign Up</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Information -->
+    <div class="contact container text-center">
+        <h2>Contact Us</h2>
+        <p>Email: support@memberszone.com</p>
+        <p>Phone: 123-456-7890</p>
+        <a th:href="@{/contact}" class="btn btn-secondary">Contact Form</a>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer bg-light text-center">
+        <div class="container">
+            <p>&copy; 2024 MembersZone. All Rights Reserved.</p>
+            <ul class="list-inline">
+                <li class="list-inline-item"><a th:href="@{/privacy}">Privacy Policy</a></li>
+                <li class="list-inline-item"><a th:href="@{/terms}">Terms of Service</a></li>
+                <li class="list-inline-item"><a th:href="@{/faq}">FAQ</a></li>
+            </ul>
+            <ul class="list-inline">
+                <li class="list-inline-item"><a th:href="@{/faq}"><img src="facebook-icon.png" alt="Facebook"></a></li>
+                <li class="list-inline-item"><a th:href="@{/faq}"><img src="twitter-icon.png" alt="Twitter"></a></li>
+                <li class="list-inline-item"><a th:href="@{/faq}"><img src="instagram-icon.png" alt="Instagram"></a></li>
+            </ul>
+            <div class="newsletter-signup">
+                <h3>Subscribe to our Newsletter</h3>
+                <form>
+                    <input type="email" placeholder="Enter your email" required>
+                    <button type="submit" class="btn btn-primary">Subscribe</button>
+                </form>
+            </div>
+        </div>
+    </footer>
+
+    <script th:src="@{https://code.jquery.com/jquery-3.5.1.slim.min.js}"></script>
+    <script th:src="@{https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js}"></script>
+    <script th:src="@{https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js}"></script>
+</body>
+</html>
