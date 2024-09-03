@@ -62,11 +62,16 @@ public class PageController {
 	@PostMapping("/login")
 	public String login(@RequestParam String username, @RequestParam String password, Model model) {
 		if (adminService.validatePassword(username, password)) {
-			return "home"; // Redirect to home page on successful login
+			return "addplan"; // Redirect to home page on successful login
 		} else {
 			model.addAttribute("error", "Invalid username or password!");
 			return "login"; // Return to login page with an error message
 		}
+	}
+
+	@GetMapping("/addplan")
+	public String addplan(Model model) {
+		return "addplan";
 	}
 
 	@GetMapping("/forgot-password")

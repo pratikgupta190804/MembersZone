@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Add Membership Plan</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-4">
+        <h1 class="mb-4">Add New Membership Plan</h1>
+
+        <!-- Success Message -->
+        <div th:if="${successMessage}" class="alert alert-success" role="alert" th:text="${successMessage}"></div>
+
+        <!-- Form for Adding Membership Plan -->
+        <form th:action="@{/add-plan}"  method="post">
+            <div class="form-group">
+                <label for="planName">Plan Name</label>
+                <input type="text" id="planName" class="form-control" th:field="*{planName}" required />
+            </div>
+
+            <div class="form-group">
+                <label for="duration">Duration (Months)</label>
+                <input type="number" id="duration" class="form-control" th:field="*{durationInMonths}" required />
+            </div>
+
+            <div class="form-group">
+                <label for="price">Price</label>
+                <input type="number" id="price" class="form-control" step="0.01" th:field="*{price}" required />
+            </div>
+
+            <button type="submit" class="btn btn-primary">Add Plan</button>
+        </form>
+
+        <!-- Display the Added Plan -->
+        <div th:if="${membershipPlan}" class="mt-4">
+            <h2 class="mb-3">Added Plan Details</h2>
+            <ul class="list-group">
+                <li class="list-group-item"><strong>Plan Name:</strong> <span th:text="${membershipPlan.planName}"></span></li>
+                <li class="list-group-item"><strong>Duration:</strong> <span th:text="${membershipPlan.durationInMonths}"></span> months</li>
+                <li class="list-group-item"><strong>Price:</strong> $<span th:text="${membershipPlan.price}"></span></li>
+            </ul>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
