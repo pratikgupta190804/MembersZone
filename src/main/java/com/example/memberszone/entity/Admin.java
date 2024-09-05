@@ -9,7 +9,7 @@ import jakarta.persistence.Table;
 @Table(name = "gym_info")
 @SecondaryTable(name = "admins", pkJoinColumns = @PrimaryKeyJoinColumn(name = "id"))
 public class Admin {
-
+  
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
