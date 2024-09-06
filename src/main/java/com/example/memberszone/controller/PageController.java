@@ -1,11 +1,17 @@
 package com.example.memberszone.controller;
 
+import jakarta.servlet.http.HttpSession;
+
 import com.example.memberszone.dto.AdminDto;
+import com.example.memberszone.dto.MembershipPlanDto;
 import com.example.memberszone.service.AdminService;
+import com.example.memberszone.service.MembershipPlanService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -14,6 +20,8 @@ public class PageController {
 
 	@Autowired
 	private AdminService adminService;
+	@Autowired
+	private MembershipPlanService membershipPlanService;
 
 	@GetMapping("/")
 	public String index(Model model) {
@@ -70,7 +78,32 @@ public class PageController {
 	}
 
 	@GetMapping("/addplan")
-	public String addplan(Model model) {
+	public String showAddPlanForm(Model model) {
+		model.addAttribute("membershipPlan", new MembershipPlanDto());
+
+		return "addplan"; // Thymeleaf template name
+	}
+
+	@PostMapping("/addplan")
+	public String addMembershipPlan(@ModelAttribute MembershipPlanDto membershipPlanDto, HttpSession session,
+			Model model) {
+		// Retrieve gymId from session
+		Long gymId = (Long) session.getAttribute("gymId");
+
+		if (gymId != null) {
+			// Set the gymId in the DTO before saving
+			membershipPlanDto.setGymId(gymId);
+
+			// Call service method to save the membership plan
+			membershipPlanService.saveMembershipPlan(membershipPlanDto);
+
+			// Add success message
+			model.addAttribute("message", "Membership plan added successfully.");
+		} else {
+			// Handle case where gymId is not available
+			model.addAttribute("error", "Unable to determine gym for the logged-in admin.");
+		}
+
 		return "addplan";
 	}
 

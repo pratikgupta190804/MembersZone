@@ -20,28 +20,25 @@
         </div>
         
         <!-- Membership Plan Form -->
-        <form th:action="@{/addplan}" th:object="${membershipPlan}" method="post">
-            <div class="form-group">
-                <label for="planName">Plan Name</label>
-                <input type="text" class="form-control" id="planName" th:field="*{planName}" placeholder="Enter plan name" required>
-            </div>
-            <div class="form-group">
-                <label for="durationInMonths">Duration (in months)</label>
-                <input type="number" class="form-control" id="durationInMonths" th:field="*{durationInMonths}" placeholder="Enter duration in months" required>
-            </div>
-            <div class="form-group">
-                <label for="price">Price</label>
-                <input type="text" class="form-control" id="price" th:field="*{price}" placeholder="Enter price" required>
-            </div>
-            <div class="form-group">
-                <label for="gymId">Gym</label>
-                <select class="form-control" id="gymId" th:field="*{gymId}" required>
-                    <!-- Populate gyms dynamically -->
-                    <option th:each="gym : ${gyms}" th:value="${gym.id}" th:text="${gym.name}"></option>
-                </select>
-            </div>
-            <button type="submit" class="btn btn-primary">Add Plan</button>
-        </form>
+       <form th:action="@{/addplan}" th:object="${membershipPlanDto}" method="post">
+    <div class="form-group">
+        <label for="planName">Plan Name</label>
+        <input type="text" class="form-control" id="planName" th:field="*{planName}" placeholder="Enter plan name" required>
+    </div>
+    <div class="form-group">
+        <label for="durationInMonths">Duration (in months)</label>
+        <input type="number" class="form-control" id="durationInMonths" th:field="*{durationInMonths}" placeholder="Enter duration in months" required>
+    </div>
+    <div class="form-group">
+        <label for="price">Price</label>
+        <input type="text" class="form-control" id="price" th:field="*{price}" placeholder="Enter price" required>
+    </div>
+    
+    <!-- No need for gymId selection here -->
+    
+    <button type="submit" class="btn btn-primary">Add Plan</button>
+</form>
+       
     </div>
 
     <!-- Bootstrap JS and dependencies -->
