@@ -20,7 +20,7 @@ public class MembershipPlan {
     @Column(name = "price", nullable = false)
     private BigDecimal price;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "gym_id", nullable = false)
     private Admin gym; // Renamed for clarity
 

@@ -2,7 +2,6 @@ package com.example.memberszone.dto;
 
 public class AdminDto {
 	private String username;
-
     private String firstName;
     private String lastName;
     private String email;
@@ -10,7 +9,8 @@ public class AdminDto {
     private String password;
     private String gymName;
     private String gymAddress;
-
+    private Long gymId;
+    
     // Getters and Setters
     public String getFirstName() {
         return firstName;
@@ -72,7 +72,15 @@ public class AdminDto {
         return gymAddress;
     }
 
-    public void setGymAddress(String gymAddress) {
+    public Long getGymId() {
+		return gymId;
+	}
+
+	public void setGymId(Long gymId) {
+		this.gymId = gymId;
+	}
+
+	public void setGymAddress(String gymAddress) {
         this.gymAddress = gymAddress;
     }
 

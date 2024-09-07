@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpSession;
 
 import com.example.memberszone.dto.AdminDto;
 import com.example.memberszone.dto.MembershipPlanDto;
+import com.example.memberszone.entity.Admin;
 import com.example.memberszone.service.AdminService;
 import com.example.memberszone.service.MembershipPlanService;
 
@@ -62,15 +63,22 @@ public class PageController {
 	}
 
 	@GetMapping("/login")
-
 	public String showLoginForm(Model model) {
 		return "login"; // Returns the login.html Thymeleaf template
 	}
 
+	// Handle login POST request
 	@PostMapping("/login")
-	public String login(@RequestParam String username, @RequestParam String password, Model model) {
-		if (adminService.validatePassword(username, password)) {
-			return "addplan"; // Redirect to home page on successful login
+	public String login(@RequestParam String username, @RequestParam String password, HttpSession session,
+			Model model) {
+
+		AdminDto adminDto = adminService.validatePassword(username, password);
+
+		if (adminDto != null) {
+			// Store gymId in the session after successful login
+			session.setAttribute("gymId", adminDto.getGymId()); // Ensure gymId is set in AdminDto
+
+			return "redirect:/addplan"; // Redirect to the addplan page
 		} else {
 			model.addAttribute("error", "Invalid username or password!");
 			return "login"; // Return to login page with an error message
@@ -87,9 +95,11 @@ public class PageController {
 	@PostMapping("/addplan")
 	public String addMembershipPlan(@ModelAttribute MembershipPlanDto membershipPlanDto, HttpSession session,
 			Model model) {
+		System.out.println("Reached in the post mapping");
 		// Retrieve gymId from session
 		Long gymId = (Long) session.getAttribute("gymId");
 
+		System.out.println(gymId);
 		if (gymId != null) {
 			// Set the gymId in the DTO before saving
 			membershipPlanDto.setGymId(gymId);
@@ -99,6 +109,7 @@ public class PageController {
 
 			// Add success message
 			model.addAttribute("message", "Membership plan added successfully.");
+
 		} else {
 			// Handle case where gymId is not available
 			model.addAttribute("error", "Unable to determine gym for the logged-in admin.");
