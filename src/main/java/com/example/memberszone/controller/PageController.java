@@ -8,6 +8,8 @@ import com.example.memberszone.entity.Admin;
 import com.example.memberszone.service.AdminService;
 import com.example.memberszone.service.MembershipPlanService;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -123,13 +125,24 @@ public class PageController {
 		return "forgot-password"; // Returns the forgot-password.html Thymeleaf template
 	}
 
-	@GetMapping("/plans")
-	public String getPLans(Model model) {
-		return "plans";
-	}
+	
 	
 	@GetMapping("/admin")
 	public String getAdminPage(Model model) {
 		return "admin";
 	}
+	
+	 // Fetch membership plans for the gym
+    @GetMapping("/plans")
+    public String getPlans(HttpSession session, Model model) {
+        Long gymId = (Long) session.getAttribute("gymId");
+        if (gymId == null) {
+            model.addAttribute("error", "Gym not found for the current admin.");
+            return "login"; // Return to plans page with error
+        }
+        List<MembershipPlanDto> membershipPlans = membershipPlanService.getPlansByGymId(gymId);
+       System.out.println(membershipPlans);
+        model.addAttribute("membershipPlans", membershipPlans);
+        return "plans"; // Return to plans Thymeleaf template
+    }
 }

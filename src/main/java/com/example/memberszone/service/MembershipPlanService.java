@@ -5,6 +5,9 @@ import com.example.memberszone.entity.Admin;
 import com.example.memberszone.entity.MembershipPlan;
 import com.example.memberszone.repo.AdminRepository; // Import your Admin repository
 import com.example.memberszone.repo.MembershipPlanRepository;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,5 +35,14 @@ public class MembershipPlanService {
         membershipPlanRepository.save(membershipPlan);
     }
 
-    // Additional methods for other operations can be added here
+    public List<MembershipPlanDto> getPlansByGymId(Long gymId) {
+        List<MembershipPlan> membershipPlans = membershipPlanRepository.findByGymId(gymId);
+        return membershipPlans.stream().map(plan -> new MembershipPlanDto(
+                plan.getId(),
+                plan.getPlanName(),
+                plan.getDurationInMonths(),
+                plan.getPrice(),
+                plan.getGym().getId()
+        )).toList();
+    }
 }

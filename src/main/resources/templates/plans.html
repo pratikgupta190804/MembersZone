@@ -1,87 +1,100 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Membership Plans</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Membership Plans</title>
+<!-- Bootstrap CSS -->
+<link
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+	rel="stylesheet">
 </head>
 <body>
-    <div class="container mt-5">
-        <h2 class="mb-4">Membership Plans for Your Gym</h2>
-        
-        <!-- Display error message if gymId is not found -->
-        <div th:if="${error}" class="alert alert-danger" role="alert">
-            <p th:text="${error}"></p>
-        </div>
-        
-        <!-- Display plans if available -->
-        <div th:if="${membershipPlans}">
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>Plan Name</th>
-                        <th>Duration (Months)</th>
-                        <th>Price</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="plan, iter : ${membershipPlans}" th:id="'plan-'+${iter.index}">
-                        <td th:text="${plan.planName}">Plan Name</td>
-                        <td th:text="${plan.durationInMonths}">Duration</td>
-                        <td th:text="${plan.price}">Price</td>
-                        <td>
-                            <!-- Delete Button with Confirmation Alert -->
-                            <button class="btn btn-danger" onclick="confirmDelete('${plan.id}', '${plan.planName}', ${iter.index})">Delete</button>
-                            <!-- Update Button to toggle the form for editing -->
-                            <button class="btn btn-warning" onclick="toggleUpdateForm(${iter.index})">Update</button>
-                        </td>
-                    </tr>
+	<div class="container mt-5">
+		<h2 class="mb-4">Membership Plans for Your Gym</h2>
 
-                    <!-- Update Form (Initially hidden) -->
-                    <tr th:id="'update-row-'+${iter.index}" style="display: none;">
-                        <td colspan="4">
-                            <form id="updateForm-${iter.index}">
-                                <input type="hidden" th:value="${plan.id}" name="id">
-                                <div class="form-row">
-                                    <div class="col">
-                                        <input type="text" class="form-control" name="planName" th:value="${plan.planName}" placeholder="Plan Name">
-                                    </div>
-                                    <div class="col">
-                                        <input type="number" class="form-control" name="durationInMonths" th:value="${plan.durationInMonths}" placeholder="Duration">
-                                    </div>
-                                    <div class="col">
-                                        <input type="text" class="form-control" name="price" th:value="${plan.price}" placeholder="Price">
-                                    </div>
-                                    <div class="col">
-                                        <button type="button" class="btn btn-success" onclick="updatePlan(${iter.index})">Save</button>
-                                    </div>
-                                </div>
-                            </form>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        
-        <!-- No plans available -->
-        <div th:if="${#lists.isEmpty(membershipPlans)}" class="alert alert-info">
-            <p>No membership plans available for your gym.</p>
-        </div>
-    </div>
+		<!-- Display error message if gymId is not found -->
+		<div th:if="${error}" class="alert alert-danger" role="alert">
+			<p th:text="${error}"></p>
+		</div>
 
-    <!-- JavaScript to handle Delete confirmation and toggling Update form -->
-    <script>
+		<!-- Display plans if available -->
+		<div th:if="${membershipPlans}">
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th>Plan Name</th>
+						<th>Duration (Months)</th>
+						<th>Price</th>
+						<th>Actions</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="plan, iter : ${membershipPlans}"
+						th:id="'plan-'+${iter.index}">
+						<td th:text="${plan.planName}">Plan Name</td>
+						<td th:text="${plan.durationInMonths}">Duration</td>
+						<td th:text="${plan.price}">Price</td>
+						<td>
+							<!-- Delete Button with Confirmation Alert -->
+							<button class="btn btn-danger"
+								onclick="confirmDelete('${plan.id}', '${plan.planName}', '${iter.index}')">Delete</button>
+
+							<!-- Update Button to toggle the form for editing -->
+							<button class="btn btn-warning"
+								onclick="toggleUpdateForm('${iter.index}')">Update</button>
+						</td>
+					</tr>
+
+					<!-- Update Form (Initially hidden) -->
+					<tr th:id="'update-row-'+${iter.index}" style="display: none;">
+						<td colspan="4">
+							<form id="updateForm-${iter.index}">
+								<input type="hidden" th:value="${plan.id}" name="id">
+								<div class="form-row">
+									<div class="col">
+										<input type="text" class="form-control" name="planName"
+											th:value="${plan.planName}" placeholder="Plan Name">
+									</div>
+									<div class="col">
+										<input type="number" class="form-control"
+											name="durationInMonths" th:value="${plan.durationInMonths}"
+											placeholder="Duration">
+									</div>
+									<div class="col">
+										<input type="text" class="form-control" name="price"
+											th:value="${plan.price}" placeholder="Price">
+									</div>
+									<div class="col">
+										<button type="button" class="btn btn-success"
+											onclick="updatePlan('${iter.index}')">Save</button>
+									</div>
+								</div>
+							</form>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<!-- No plans available -->
+		<div th:if="${#lists.isEmpty(membershipPlans)}"
+			class="alert alert-info">
+			<p>No membership plans available for your gym.</p>
+		</div>
+	</div>
+
+	<!-- JavaScript to handle Delete confirmation and toggling Update form -->
+	<script>
         // Function to delete the plan using AJAX
         function confirmDelete(planId, planName, index) {
+        	const idx = parseInt(index, 10);
             if (confirm("Are you sure you want to delete the plan: " + planName + "?")) {
                 fetch('/deleteplan/' + planId, { method: 'DELETE' })
                 .then(response => {
                     if (response.ok) {
-                        document.getElementById('plan-' + index).remove();
-                        document.getElementById('update-row-' + index).remove();
+                        document.getElementById('plan-' + idx).remove();
+                        document.getElementById('update-row-' + idx).remove();
                     } else {
                         alert('Error deleting plan.');
                     }
@@ -91,7 +104,8 @@
 
         // Function to show/hide the update form
         function toggleUpdateForm(index) {
-            const updateRow = document.getElementById('update-row-' + index);
+        	const idx = parseInt(index, 10);
+            const updateRow = document.getElementById('update-row-' + idx);
             updateRow.style.display = (updateRow.style.display === 'none') ? 'table-row' : 'none';
         }
 
@@ -121,9 +135,11 @@
         }
     </script>
 
-    <!-- Bootstrap JS and dependencies -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+	<!-- Bootstrap JS and dependencies -->
+	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+	<script
+		src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+	<script
+		src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
