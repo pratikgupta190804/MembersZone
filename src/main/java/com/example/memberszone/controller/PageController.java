@@ -123,4 +123,13 @@ public class PageController {
 		return "forgot-password"; // Returns the forgot-password.html Thymeleaf template
 	}
 
+	@GetMapping("/plans")
+	public String getPLans(Model model) {
+		return "plans";
+	}
+	
+	@GetMapping("/admin")
+	public String getAdminPage(Model model) {
+		return "admin";
+	}
 }
