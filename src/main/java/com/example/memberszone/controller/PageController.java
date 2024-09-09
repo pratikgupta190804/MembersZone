@@ -181,4 +181,18 @@ public class PageController {
 		}
 	}
 
+	@GetMapping("/add-member")
+	public String getAddMember(Model model) {
+		return "add-member";
+	}
+
+	@GetMapping("/view-members")
+	public String getViewMembers(Model model) {
+		return "view-members";
+	}
+	
+	@GetMapping("/dashboard")
+	public String getDashBoard(Model model) {
+		return "dashboard";
+	}
 }
