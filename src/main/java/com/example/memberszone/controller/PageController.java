@@ -5,18 +5,25 @@ import jakarta.servlet.http.HttpSession;
 import com.example.memberszone.dto.AdminDto;
 import com.example.memberszone.dto.MembershipPlanDto;
 import com.example.memberszone.entity.Admin;
+import com.example.memberszone.entity.MembershipPlan;
 import com.example.memberszone.service.AdminService;
 import com.example.memberszone.service.MembershipPlanService;
 
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class PageController {
@@ -125,24 +132,36 @@ public class PageController {
 		return "forgot-password"; // Returns the forgot-password.html Thymeleaf template
 	}
 
-	
-	
 	@GetMapping("/admin")
 	public String getAdminPage(Model model) {
 		return "admin";
 	}
+
+	// Fetch membership plans for the gym
+	@GetMapping("/plans")
+	public String getPlans(HttpSession session, Model model) {
+		Long gymId = (Long) session.getAttribute("gymId");
+		if (gymId == null) {
+			model.addAttribute("error", "Gym not found for the current admin.");
+			return "login"; // Return to plans page with error
+		}
+		List<MembershipPlanDto> membershipPlans = membershipPlanService.getPlansByGymId(gymId);
+		System.out.println(membershipPlans);
+		model.addAttribute("membershipPlans", membershipPlans);
+		return "plans"; // Return to plans Thymeleaf template
+	}
+
+	// Delete a membership plan (AJAX)
+	@DeleteMapping("/delete-plan/{id}")
+	@ResponseBody
+	public ResponseEntity<String> deletePlan(@PathVariable Long id) {
+		try {
+			membershipPlanService.deletePlan(id);
+			return new ResponseEntity<>("Plan deleted successfully", HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>("Error deleting plan", HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
 	
-	 // Fetch membership plans for the gym
-    @GetMapping("/plans")
-    public String getPlans(HttpSession session, Model model) {
-        Long gymId = (Long) session.getAttribute("gymId");
-        if (gymId == null) {
-            model.addAttribute("error", "Gym not found for the current admin.");
-            return "login"; // Return to plans page with error
-        }
-        List<MembershipPlanDto> membershipPlans = membershipPlanService.getPlansByGymId(gymId);
-       System.out.println(membershipPlans);
-        model.addAttribute("membershipPlans", membershipPlans);
-        return "plans"; // Return to plans Thymeleaf template
-    }
 }

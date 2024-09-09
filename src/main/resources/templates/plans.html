@@ -1,145 +1,148 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Membership Plans</title>
-<!-- Bootstrap CSS -->
-<link
-	href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
-	rel="stylesheet">
+    <title>Gym Membership Plans</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { padding: 20px; }
+    </style>
 </head>
 <body>
-	<div class="container mt-5">
-		<h2 class="mb-4">Membership Plans for Your Gym</h2>
+    <h1 class="mb-4">Gym Membership Plans</h1>
+    
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Duration (Months)</th>
+                <th>Price</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="plan : ${membershipPlans}">
+                <td th:text="${plan.planName}"></td>
+                <td th:text="${plan.durationInMonths}"></td>
+                <td th:text="${plan.price}"></td>
+                <td>
+                    <a href="#" class="btn btn-sm btn-primary update-plan" data-id="${plan.id}">Update</a>
+                    <a href="#" class="btn btn-sm btn-danger delete-plan" data-id="${plan.id}">Delete</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 
-		<!-- Display error message if gymId is not found -->
-		<div th:if="${error}" class="alert alert-danger" role="alert">
-			<p th:text="${error}"></p>
-		</div>
+    <!-- Update Form Modal -->
+    <div id="updateModal" class="modal fade" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Update Membership Plan</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="updateForm" th:action="@{/update-plan}" method="post">
+                        <input type="hidden" th:field="*{id}" />
+                        <div class="mb-3">
+                            <label for="planName" class="form-label">Plan Name:</label>
+                            <input type="text" class="form-control" id="planName" th:field="*{planName}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="durationInMonths" class="form-label">Duration (Months):</label>
+                            <input type="number" class="form-control" id="durationInMonths" th:field="*{durationInMonths}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="price" class="form-label">Price:</label>
+                            <input type="number" step="0.01" class="form-control" id="price" th:field="*{price}" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Update Plan</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
-		<!-- Display plans if available -->
-		<div th:if="${membershipPlans}">
-			<table class="table table-striped">
-				<thead>
-					<tr>
-						<th>Plan Name</th>
-						<th>Duration (Months)</th>
-						<th>Price</th>
-						<th>Actions</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr th:each="plan, iter : ${membershipPlans}"
-						th:id="'plan-'+${iter.index}">
-						<td th:text="${plan.planName}">Plan Name</td>
-						<td th:text="${plan.durationInMonths}">Duration</td>
-						<td th:text="${plan.price}">Price</td>
-						<td>
-							<!-- Delete Button with Confirmation Alert -->
-							<button class="btn btn-danger"
-								onclick="confirmDelete('${plan.id}', '${plan.planName}', '${iter.index}')">Delete</button>
+    <!-- Delete Confirmation Dialog -->
+    <div id="deleteConfirmation" class="modal fade" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirm Deletion</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete this plan?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger delete-confirm" data-id="">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Handle clicking the 'Update' button
+            $('.update-plan').on('click', function(e) {
+                e.preventDefault();
+                var planId = $(this).data('id');
+                
+                // Fetch plan details via AJAX
+                $.get('/fetch-plan/' + planId, function(data) {
+                    $('#updateForm input[name="id"]').val(data.id);
+                    $('#updateForm input[name="planName"]').val(data.planName);
+                    $('#updateForm input[name="durationInMonths"]').val(data.durationInMonths);
+                    $('#updateForm input[name="price"]').val(data.price);
+                    
+                    // Show the modal
+                    $('#updateModal').modal('show');
+                });
+            });
 
-							<!-- Update Button to toggle the form for editing -->
-							<button class="btn btn-warning"
-								onclick="toggleUpdateForm('${iter.index}')">Update</button>
-						</td>
-					</tr>
+            // Handle clicking the 'Delete' button
+            $('.delete-plan').on('click', function(e) {
+                e.preventDefault();
+                var planId = $(this).data('id');
+                $('#deleteConfirmation .delete-confirm').attr('data-id', planId);
+                $('#deleteConfirmation').modal('show');
+            });
 
-					<!-- Update Form (Initially hidden) -->
-					<tr th:id="'update-row-'+${iter.index}" style="display: none;">
-						<td colspan="4">
-							<form id="updateForm-${iter.index}">
-								<input type="hidden" th:value="${plan.id}" name="id">
-								<div class="form-row">
-									<div class="col">
-										<input type="text" class="form-control" name="planName"
-											th:value="${plan.planName}" placeholder="Plan Name">
-									</div>
-									<div class="col">
-										<input type="number" class="form-control"
-											name="durationInMonths" th:value="${plan.durationInMonths}"
-											placeholder="Duration">
-									</div>
-									<div class="col">
-										<input type="text" class="form-control" name="price"
-											th:value="${plan.price}" placeholder="Price">
-									</div>
-									<div class="col">
-										<button type="button" class="btn btn-success"
-											onclick="updatePlan('${iter.index}')">Save</button>
-									</div>
-								</div>
-							</form>
-						</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
-
-		<!-- No plans available -->
-		<div th:if="${#lists.isEmpty(membershipPlans)}"
-			class="alert alert-info">
-			<p>No membership plans available for your gym.</p>
-		</div>
-	</div>
-
-	<!-- JavaScript to handle Delete confirmation and toggling Update form -->
-	<script>
-        // Function to delete the plan using AJAX
-        function confirmDelete(planId, planName, index) {
-        	const idx = parseInt(index, 10);
-            if (confirm("Are you sure you want to delete the plan: " + planName + "?")) {
-                fetch('/deleteplan/' + planId, { method: 'DELETE' })
-                .then(response => {
-                    if (response.ok) {
-                        document.getElementById('plan-' + idx).remove();
-                        document.getElementById('update-row-' + idx).remove();
-                    } else {
+            // Handle confirming the deletion
+            $('.delete-confirm').on('click', function() {
+                var planId = $(this).data('id');
+                $.ajax({
+                    url: '/delete-plan/' + planId,
+                    method: 'DELETE',
+                    success: function(response) {
+                        location.reload();
+                    },
+                    error: function() {
                         alert('Error deleting plan.');
                     }
                 });
-            }
-        }
-
-        // Function to show/hide the update form
-        function toggleUpdateForm(index) {
-        	const idx = parseInt(index, 10);
-            const updateRow = document.getElementById('update-row-' + idx);
-            updateRow.style.display = (updateRow.style.display === 'none') ? 'table-row' : 'none';
-        }
-
-        // Function to update the plan using AJAX
-        function updatePlan(index) {
-            const form = document.getElementById('updateForm-' + index);
-            const formData = new FormData(form);
-
-            fetch('/updateplan', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Update the table row with the new data
-                    document.querySelector(`#plan-${index} td:nth-child(1)`).innerText = formData.get('planName');
-                    document.querySelector(`#plan-${index} td:nth-child(2)`).innerText = formData.get('durationInMonths');
-                    document.querySelector(`#plan-${index} td:nth-child(3)`).innerText = formData.get('price');
-
-                    // Hide the update form
-                    toggleUpdateForm(index);
-                } else {
-                    alert('Error updating plan.');
-                }
             });
-        }
-    </script>
 
-	<!-- Bootstrap JS and dependencies -->
-	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-	<script
-		src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
-	<script
-		src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+            // Handle form submission for updating the plan
+            $('#updateForm form').on('submit', function(e) {
+                e.preventDefault();
+                var formData = $(this).serialize();
+                $.ajax({
+                    url: '/update-plan',
+                    method: 'PUT',
+                    data: formData,
+                    success: function(response) {
+                        location.reload();
+                    },
+                    error: function() {
+                        alert('Error updating plan.');
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>

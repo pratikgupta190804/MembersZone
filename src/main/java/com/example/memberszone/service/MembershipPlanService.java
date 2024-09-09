@@ -45,4 +45,12 @@ public class MembershipPlanService {
                 plan.getGym().getId()
         )).toList();
     }
+    
+
+    // New method to delete a plan
+    public void deletePlan(Long id) {
+        membershipPlanRepository.deleteById(id);
+    }
+    
+   
 }
