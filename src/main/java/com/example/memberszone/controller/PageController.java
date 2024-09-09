@@ -104,7 +104,7 @@ public class PageController {
 	@PostMapping("/addplan")
 	public String addMembershipPlan(@ModelAttribute MembershipPlanDto membershipPlanDto, HttpSession session,
 			Model model) {
-		System.out.println("Reached in the post mapping");
+
 		// Retrieve gymId from session
 		Long gymId = (Long) session.getAttribute("gymId");
 
@@ -140,6 +140,7 @@ public class PageController {
 	// Fetch membership plans for the gym
 	@GetMapping("/plans")
 	public String getPlans(HttpSession session, Model model) {
+		System.out.println("reached plans ");
 		Long gymId = (Long) session.getAttribute("gymId");
 		if (gymId == null) {
 			model.addAttribute("error", "Gym not found for the current admin.");
@@ -163,5 +164,21 @@ public class PageController {
 		}
 	}
 
-	
+	@GetMapping("/fetch-plan/{id}")
+	@ResponseBody
+	public MembershipPlanDto getPlan(@PathVariable Long id) {
+		return membershipPlanService.getPlanById(id); // Directly return the DTO from the service
+	}
+
+	@PostMapping("/update-plan")
+	@ResponseBody
+	public ResponseEntity<?> updatePlan(@ModelAttribute MembershipPlanDto membershipPlanDto) {
+		try {
+			membershipPlanService.updatePlan(membershipPlanDto);
+			return ResponseEntity.ok().body("Plan updated successfully");
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().body("Error updating plan: " + e.getMessage());
+		}
+	}
+
 }

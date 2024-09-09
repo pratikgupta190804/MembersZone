@@ -24,7 +24,7 @@ public class MembershipPlanDto {
     // Getters and Setters
 
     public Long getId() {
-        return id;
+        return this.id;
     }
 
     public void setId(Long id) {
@@ -62,4 +62,10 @@ public class MembershipPlanDto {
     public void setGymId(Long gymId) {
         this.gymId = gymId;
     }
+
+	@Override
+	public String toString() {
+		return "MembershipPlanDto [id=" + id + ", planName=" + planName + ", durationInMonths=" + durationInMonths
+				+ ", price=" + price + ", gymId=" + gymId + "]";
+	}
 }
