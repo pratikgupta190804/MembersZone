@@ -1,148 +1,239 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MembersZone - Gym Management Simplified</title>
-    <link rel="stylesheet" th:href="@{https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css}">
-    <style>
-        .hero {
-            background: url('hero-background.jpg') no-repeat center center;
-            background-size: cover;
-            color: white;
-            text-align: center;
-            padding: 100px 0;
-        }
-        .features, .how-it-works, .testimonials, .pricing, .contact {
-            padding: 50px 0;
-        }
-    </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Home - MembersZone</title>
+<link
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+	rel="stylesheet" />
+<link rel="stylesheet" href="/css/styles.css" />
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+<style>
+.card-equal {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+}
+
+.navbar-nav {
+	margin-left: auto;
+}
+
+.navbar-toggler-icon {
+	background-image: url("data:image/svg+xml;charset=utf8,...");
+}
+</style>
 </head>
 <body>
-    <!-- Header -->
-    <header class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" th:href="@{/}">MembersZone</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item"><a class="nav-link" th:href="@{/home}">Home</a></li>
-                <li class="nav-item"><a class="nav-link" th:href="@{/features}">Features</a></li>
-                <li class="nav-item"><a class="nav-link" th:href="@{/pricing}">Pricing</a></li>
-                <li class="nav-item"><a class="nav-link" th:href="@{/aboutus}">About Us</a></li>
-                <li class="nav-item"><a class="nav-link" th:href="@{/contactus}">Contact Us</a></li>
-                <li class="nav-item"><a class="nav-link" th:href="@{/login}">Login</a></li>
-            </ul>
-        </div>
-    </header>
+	<!-- Navbar -->
+	<nav class="navbar navbar-expand-lg navbar-light bg-light">
+		<a class="navbar-brand" href="#">MembersZone</a>
+		<button class="navbar-toggler" type="button" data-toggle="collapse"
+			data-target="#navbarNav" aria-controls="navbarNav"
+			aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarNav">
+			<ul class="navbar-nav ml-auto">
+				<li class="nav-item active"><a class="nav-link" href="/home">Home</a>
+				</li>
+				<li class="nav-item"><a class="nav-link" href="/features">Features</a>
+				</li>
+				<li class="nav-item"><a class="nav-link" href="#pricing">Pricing</a>
+				</li>
 
-    <!-- Hero Section -->
-    <div class="hero">
-        <h1>Welcome to MembersZone</h1>
-        <p>Gym Management Simplified</p>
-        <a th:href="@{/signup}" class="btn btn-primary btn-lg">Get Started</a>
-        <a th:href="@{/features}" class="btn btn-secondary btn-lg">Learn More</a>
-    </div>
+				<li class="nav-item"><a class="nav-link" href="/contact-us">Contact</a>
+				</li>
+				<li class="nav-item"><a class="btn btn-primary" href="/signup">SignUp</a></li>
+				<li class="nav-item"><a class="btn btn-primary ml-2"
+					href="/login">Login</a></li>
+			</ul>
+		</div>
+	</nav>
 
-    <!-- Features Overview -->
-    <div class="features container text-center">
-        <h2>Our Features</h2>
-        <div class="row">
-            <div class="col-md-4">
-                <h3>Membership Management</h3>
-                <p>Manage member profiles, track memberships, handle renewals and cancellations easily.</p>
-            </div>
-            <div class="col-md-4">
-                <h3>Class Scheduling</h3>
-                <p>Create and manage class schedules, allowing members to book classes online.</p>
-            </div>
-            <div class="col-md-4">
-                <h3>Analytics and Reporting</h3>
-                <p>Gain insights into gym performance with detailed analytics and reports.</p>
-            </div>
-        </div>
-    </div>
+	<!-- Hero Section -->
+	<header class="hero bg-primary text-white text-center py-5">
+		<div class="container">
+			<h1>Welcome to MembersZone</h1>
+			<p>Your ultimate solution for gym management and member
+				engagement.</p>
+			<a href="/signup" class="btn btn-light btn-lg">Get Started</a>
+		</div>
+	</header>
 
-    <!-- How It Works -->
-    <div class="how-it-works container text-center">
-        <h2>How It Works</h2>
-        <p>Simple steps to get started with MembersZone:</p>
-        <ol>
-            <li>Sign Up</li>
-            <li>Set Up Your Gym Profile</li>
-            <li>Add Membership Plans and Classes</li>
-            <li>Invite Members</li>
-            <li>Manage and Track Your Gym's Performance</li>
-        </ol>
-    </div>
+	<!-- Key Features Section -->
+	<section id="features" class="key-features my-5">
+		<div class="container">
+			<h2 class="text-center mb-4">Key Features</h2>
+			<div class="row">
+				<div class="col-md-4 mb-4">
+					<div class="card text-center card-equal">
+						<div class="card-body">
+							<i class="fas fa-user-friends fa-3x mb-3"></i>
+							<h5 class="card-title">Easy Member Management</h5>
+							<p class="card-text">Effortlessly manage your gym members
+								with an intuitive interface and powerful tools.</p>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-4 mb-4">
+					<div class="card text-center card-equal">
+						<div class="card-body">
+							<i class="fas fa-chart-line fa-3x mb-3"></i>
+							<h5 class="card-title">Analytics and Reporting</h5>
+							<p class="card-text">Gain insights into your gym's
+								performance with detailed reports and analytics.</p>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-4 mb-4">
+					<div class="card text-center card-equal">
+						<div class="card-body">
+							<i class="fas fa-calendar-alt fa-3x mb-3"></i>
+							<h5 class="card-title">Class Scheduling</h5>
+							<p class="card-text">Create and manage class schedules
+								easily, and allow members to book their slots online.</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
 
-    <!-- Testimonials -->
-    <div class="testimonials container text-center">
-        <h2>What Our Users Say</h2>
-        <blockquote class="blockquote">
-            <p class="mb-0">"MembersZone has revolutionized how we manage our gym. It's incredibly user-friendly and efficient."</p>
-            <footer class="blockquote-footer">Alice, <cite title="Source Title">Fit Gym Owner</cite></footer>
-        </blockquote>
-        <blockquote class="blockquote">
-            <p class="mb-0">"The analytics and reporting features are fantastic. We can make data-driven decisions easily."</p>
-            <footer class="blockquote-footer">Bob, <cite title="Source Title">Strong Gym Owner</cite></footer>
-        </blockquote>
-    </div>
+	<!-- Why Choose Our Software Section -->
+	<section class="why-choose py-5 bg-light">
+		<div class="container">
+			<h2 class="text-center mb-4">Why Choose Our Software</h2>
+			<div class="row">
+				<div class="col-md-3 mb-4">
+					<div class="card text-center card-equal">
+						<div class="card-body">
+							<i class="fas fa-headset fa-3x mb-3"></i>
+							<h5 class="card-title">24/7 Support</h5>
+							<p class="card-text">Our dedicated support team is available
+								around the clock to assist you with any questions or issues.</p>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-3 mb-4">
+					<div class="card text-center card-equal">
+						<div class="card-body">
+							<i class="fas fa-sync fa-3x mb-3"></i>
+							<h5 class="card-title">Regular Updates</h5>
+							<p class="card-text">We continuously update our software to
+								incorporate new features and improve performance.</p>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-3 mb-4">
+					<div class="card text-center card-equal">
+						<div class="card-body">
+							<i class="fas fa-expand-arrows-alt fa-3x mb-3"></i>
+							<h5 class="card-title">Scalability</h5>
+							<p class="card-text">Our software adapts to the growth of
+								your gym, whether you're starting small or expanding rapidly.</p>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-3 mb-4">
+					<div class="card text-center card-equal">
+						<div class="card-body">
+							<i class="fas fa-dollar-sign fa-3x mb-3"></i>
+							<h5 class="card-title">Cost-Effective Solution</h5>
+							<p class="card-text">Our software offers competitive pricing
+								plans that won't break the bank, allowing you to invest in your
+								gym's success without financial strain.</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
 
-    <!-- Pricing Plans -->
-    <div class="pricing container text-center">
-        <h2>Pricing Plans</h2>
-        <div class="row">
-            <div class="col-md-4">
-                <h3>Basic</h3>
-                <p>$30/month</p>
-                <p>Access to gym</p>
-                <a th:href="@{/signup}" class="btn btn-primary">Sign Up</a>
-            </div>
-            <div class="col-md-4">
-                <h3>Premium</h3>
-                <p>$50/month</p>
-                <p>Access to gym + classes</p>
-                <a th:href="@{/signup}" class="btn btn-primary">Sign Up</a>
-            </div>
-        </div>
-    </div>
+	<!-- Pricing Plans Section -->
+	<section id="pricing" class="py-5 bg-white">
+		<div class="container">
+			<h2 class="mb-4">Pricing Plans</h2>
+			<div class="row">
+				<div class="col-lg-4 mb-4 mb-lg-0">
+					<div class="card h-100 shadow border-left-primary">
+						<div class="card-header bg-primary text-white">
+							<h3 class="my-0">Basic</h3>
+						</div>
+						<div class="card-body">
+							<h5 class="card-title">$29/month</h5>
+							<ul class="list-unstyled mt-3 mb-4">
+								<li>Up to 50 members</li>
+								<li>Basic reporting</li>
+								<li>Customer support</li>
+							</ul>
+							<a href="#" class="btn btn-outline-primary btn-block">Choose
+								Plan</a>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-4 mb-4 mb-lg-0">
+					<div class="card h-100 shadow border-left-success">
+						<div class="card-header bg-success text-white">
+							<h3 class="my-0">Premium</h3>
+						</div>
+						<div class="card-body">
+							<h5 class="card-title">$49/month</h5>
+							<ul class="list-unstyled mt-3 mb-4">
+								<li>Unlimited members</li>
+								<li>Advanced reporting</li>
+								<li>Prioritized support</li>
+							</ul>
+							<a href="#" class="btn btn-outline-success btn-block">Choose
+								Plan</a>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-4">
+					<div class="card h-100 shadow border-left-warning">
+						<div class="card-header bg-warning text-white">
+							<h3 class="my-0">Enterprise</h3>
+						</div>
+						<div class="card-body">
+							<h5 class="card-title">$99/month</h5>
+							<ul class="list-unstyled mt-3 mb-4">
+								<li>Unlimited members</li>
+								<li>Advanced reporting</li>
+								<li>Prioritized support</li>
+								<li>Custom integrations</li>
+							</ul>
+							<a href="#" class="btn btn-outline-warning btn-block">Choose
+								Plan</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
 
-    <!-- Contact Information -->
-    <div class="contact container text-center">
-        <h2>Contact Us</h2>
-        <p>Email: support@memberszone.com</p>
-        <p>Phone: 123-456-7890</p>
-        <a th:href="@{/contact}" class="btn btn-secondary">Contact Form</a>
-    </div>
-
-    <!-- Footer -->
-    <footer class="footer bg-light text-center">
-        <div class="container">
-            <p>&copy; 2024 MembersZone. All Rights Reserved.</p>
-            <ul class="list-inline">
-                <li class="list-inline-item"><a th:href="@{/privacy}">Privacy Policy</a></li>
-                <li class="list-inline-item"><a th:href="@{/terms}">Terms of Service</a></li>
-                <li class="list-inline-item"><a th:href="@{/faq}">FAQ</a></li>
-            </ul>
-            <ul class="list-inline">
-                <li class="list-inline-item"><a th:href="@{/faq}"><img src="facebook-icon.png" alt="Facebook"></a></li>
-                <li class="list-inline-item"><a th:href="@{/faq}"><img src="twitter-icon.png" alt="Twitter"></a></li>
-                <li class="list-inline-item"><a th:href="@{/faq}"><img src="instagram-icon.png" alt="Instagram"></a></li>
-            </ul>
-            <div class="newsletter-signup">
-                <h3>Subscribe to our Newsletter</h3>
-                <form>
-                    <input type="email" placeholder="Enter your email" required>
-                    <button type="submit" class="btn btn-primary">Subscribe</button>
-                </form>
-            </div>
-        </div>
-    </footer>
-
-    <script th:src="@{https://code.jquery.com/jquery-3.5.1.slim.min.js}"></script>
-    <script th:src="@{https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js}"></script>
-    <script th:src="@{https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js}"></script>
+	<footer class="bg-dark text-white py-4">
+		<div class="container text-center">
+			<p>&copy; 2024 MembersZone. All Rights Reserved.</p>
+			<ul class="list-inline">
+				<li class="list-inline-item"><a href="#" class="text-white"><i
+						class="fab fa-facebook-f"></i></a></li>
+				<li class="list-inline-item"><a href="#" class="text-white"><i
+						class="fab fa-twitter"></i></a></li>
+				<li class="list-inline-item"><a href="#" class="text-white"><i
+						class="fab fa-linkedin-in"></i></a></li>
+				<li class="list-inline-item"><a href="#" class="text-white"><i
+						class="fab fa-instagram"></i></a></li>
+			</ul>
+		</div>
+	</footer>
+	<!-- Scripts -->
+	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+	<script
+		src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+	<script
+		src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+	
 </body>
 </html>

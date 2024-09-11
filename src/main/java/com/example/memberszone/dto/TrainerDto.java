@@ -4,6 +4,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 public class TrainerDto {
 
+	private Long gymId;
 	private Long trainerId;
 	private String name;
 	private String email;
@@ -15,6 +16,15 @@ public class TrainerDto {
 	private MultipartFile imageFile;
 
 	// Getters and Setters
+
+	public TrainerDto(Long trainerId, String name, String email, String phoneNumber, String specialization,
+			Integer experience, String certification, String imageUrl) {
+		// TODO Auto-generated constructor stub
+	}
+
+	public TrainerDto() {
+		// TODO Auto-generated constructor stub
+	}
 
 	public MultipartFile getImageFile() { // Add this method
 		return imageFile;
@@ -86,5 +96,22 @@ public class TrainerDto {
 
 	public void setImageUrl(String imageUrl) {
 		this.imageUrl = imageUrl;
+	}
+
+	public Long getGymId() {
+		return gymId;
+	}
+
+	public void setGymId(Long gymId) {
+		this.gymId = gymId;
+	}
+
+
+
+	@Override
+	public String toString() {
+		return "TrainerDto [gymId=" + gymId + ", trainerId=" + trainerId + ", name=" + name + ", email=" + email
+				+ ", phoneNumber=" + phoneNumber + ", specialization=" + specialization + ", experience=" + experience
+				+ ", certification=" + certification + ", imageUrl=" + imageUrl + ", imageFile=" + imageFile + "]";
 	}
 }
