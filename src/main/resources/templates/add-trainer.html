@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Trainer</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .form-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 50px;
+        }
+        .form-title {
+            margin-bottom: 30px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .form-group label {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="form-container">
+                    <h2 class="form-title text-center">Add New Trainer</h2>
+                    <form th:action="@{/add-trainer}" th:object="${trainerDto}" method="post" enctype="multipart/form-data">
+                        
+                        <!-- Trainer Name -->
+                        <div class="form-group">
+                            <label for="name">Trainer Name</label>
+                            <input type="text" id="name" th:field="*{name}" class="form-control" placeholder="Enter trainer's name" required>
+                        </div>
+
+                        <!-- Email -->
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input type="email" id="email" th:field="*{email}" class="form-control" placeholder="Enter trainer's email" required>
+                        </div>
+
+                        <!-- Phone Number -->
+                        <div class="form-group">
+                            <label for="phoneNumber">Phone Number</label>
+                            <input type="text" id="phoneNumber" th:field="*{phoneNumber}" class="form-control" placeholder="Enter trainer's phone number" required>
+                        </div>
+
+                        <!-- Specialization -->
+                        <div class="form-group">
+                            <label for="specialization">Specialization</label>
+                            <input type="text" id="specialization" th:field="*{specialization}" class="form-control" placeholder="Enter specialization (e.g., Personal Trainer, Yoga Instructor)" required>
+                        </div>
+
+                        <!-- Experience -->
+                        <div class="form-group">
+                            <label for="experience">Experience (Years)</label>
+                            <input type="number" id="experience" th:field="*{experience}" class="form-control" placeholder="Enter number of years of experience" required>
+                        </div>
+
+                        <!-- Certification -->
+                        <div class="form-group">
+                            <label for="certification">Certification</label>
+                            <input type="text" id="certification" th:field="*{certification}" class="form-control" placeholder="Enter certifications">
+                        </div>
+
+                        <!-- Image Upload -->
+                        <div class="form-group">
+                            <label for="imageFile">Upload Profile Image</label>
+                            <input type="file" id="imageFile" th:field="*{imageFile}" class="form-control-file">
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary btn-block">Add Trainer</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

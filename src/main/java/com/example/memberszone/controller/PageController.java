@@ -4,11 +4,14 @@ import jakarta.servlet.http.HttpSession;
 
 import com.example.memberszone.dto.AdminDto;
 import com.example.memberszone.dto.MembershipPlanDto;
+import com.example.memberszone.dto.TrainerDto;
 import com.example.memberszone.entity.Admin;
 import com.example.memberszone.entity.MembershipPlan;
 import com.example.memberszone.service.AdminService;
 import com.example.memberszone.service.MembershipPlanService;
+import com.example.memberszone.service.TrainerService;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +27,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 public class PageController {
@@ -32,7 +37,9 @@ public class PageController {
 	private AdminService adminService;
 	@Autowired
 	private MembershipPlanService membershipPlanService;
-
+	@Autowired
+    private TrainerService trainerService;
+	
 	@GetMapping("/")
 	public String index(Model model) {
 		model.addAttribute("name", "Nikhil");
@@ -87,7 +94,7 @@ public class PageController {
 			// Store gymId in the session after successful login
 			session.setAttribute("gymId", adminDto.getGymId()); // Ensure gymId is set in AdminDto
 
-			return "redirect:/addplan"; // Redirect to the addplan page
+			return "redirect:/add-trainer"; // Redirect to the addplan page
 		} else {
 			model.addAttribute("error", "Invalid username or password!");
 			return "login"; // Return to login page with an error message
@@ -195,4 +202,23 @@ public class PageController {
 	public String getDashBoard(Model model) {
 		return "dashboard";
 	}
+	
+	 @GetMapping("/add-trainer")
+	    public String showAddTrainerForm(Model model) {
+	        model.addAttribute("trainerDto", new TrainerDto());
+	        return "add-trainer"; // Returns the add-trainer.html Thymeleaf template
+	    }
+
+	    @PostMapping("/add-trainer")
+	    public String addTrainer(@ModelAttribute TrainerDto trainerDto, Model model) {
+	        try {
+	            trainerService.addTrainer(trainerDto);
+	            model.addAttribute("message", "Trainer added successfully.");
+	            return "redirect:/trainer-list"; // Redirect to a list of trainers or another relevant page
+	        } catch (IOException e) {
+	            model.addAttribute("error", "Failed to add trainer. Please try again.");
+	            return "add-trainer"; // Return to the add-trainer form with an error message
+	        }
+	    }
+	
 }
