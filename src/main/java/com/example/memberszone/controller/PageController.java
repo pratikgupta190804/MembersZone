@@ -1,6 +1,7 @@
 package com.example.memberszone.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,19 +14,24 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.memberszone.dto.AdminDto;
+import com.example.memberszone.dto.MemberDTO;
 import com.example.memberszone.dto.MembershipPlanDto;
 import com.example.memberszone.dto.TrainerDto;
+import com.example.memberszone.entity.Admin;
 import com.example.memberszone.service.AdminService;
+import com.example.memberszone.service.MemberService;
 import com.example.memberszone.service.MembershipPlanService;
 import com.example.memberszone.service.TrainerService;
 
 import jakarta.servlet.http.HttpSession;
 
 @Controller
+@RequestMapping("/")
 public class PageController {
 
 	@Autowired
@@ -33,8 +39,12 @@ public class PageController {
 	@Autowired
 	private MembershipPlanService membershipPlanService;
 	@Autowired
-    private TrainerService trainerService;
+	private TrainerService trainerService;
 	
+
+	@Autowired
+	private MemberService memberService;
+
 	@GetMapping("/")
 	public String index(Model model) {
 		model.addAttribute("name", "Nikhil");
@@ -43,19 +53,19 @@ public class PageController {
 
 	@GetMapping("/home")
 	public String home(Model model) {
-	
+
 		return "home";
 	}
-	
+
 	@GetMapping("/contact-us")
 	public String contactUs(Model model) {
-		
+
 		return "contact-us";
 	}
-	
+
 	@GetMapping("/features")
 	public String features(Model model) {
-		
+
 		return "features";
 	}
 
@@ -90,7 +100,7 @@ public class PageController {
 		model.addAttribute("message", "Registration successful!");
 		return "login"; // Redirect to home or any other page after registration
 	}
-	
+
 	@GetMapping("/forgot-password")
 	public String showForgotPasswordForm(Model model) {
 		return "forgot-password"; // Returns the forgot-password.html Thymeleaf template
@@ -100,17 +110,47 @@ public class PageController {
 	public String getAdminPage(Model model) {
 		return "admin";
 	}
-	
+
 	@GetMapping("/add-member")
-	public String getAddMember(Model model) {
+	public String getAddMember(Model model, HttpSession session) {
+
+		// Retrieve the gymId from the session
+		Long gymId = (Long) session.getAttribute("gymId");
+
+		if (gymId != null) {
+			// Fetch membership plans for the gym using the gymId
+			model.addAttribute("membershipPlans", membershipPlanService.getPlansByGymId(gymId));
+		} else {
+			// Handle case when gymId is not found (optional)
+			model.addAttribute("membershipPlans", new ArrayList<>()); // Empty list or other logic
+		}
+
+		// Add a new MemberDTO to the model
+		model.addAttribute("memberDTO", new MemberDTO());
+
 		return "add-member";
 	}
 
-	@GetMapping("/view-members")
-	public String getViewMembers(Model model) {
-		return "view-members";
+	@PostMapping("/add-member")
+	public String addMember(@ModelAttribute MemberDTO memberDTO, HttpSession session, Model model) {
+		// Retrieve the gymId from the session
+
+		Long gymId = (Long) session.getAttribute("gymId");
+
+		if (gymId != null) {
+			// Call the service to add the member
+			memberService.addMember(memberDTO, gymId);
+
+			// Redirect to a success page or list of members
+			return "redirect:/home";
+		} else {
+			// Handle case when gymId is not found (optional)
+			model.addAttribute("error", "Gym ID is not available.");
+			return "add-member";
+		}
 	}
-	
+
+
 	@GetMapping("/dashboard")
 	public String getDashBoard(Model model) {
 		return "dashboard";
@@ -132,7 +172,7 @@ public class PageController {
 			// Store gymId in the session after successful login
 			session.setAttribute("gymId", adminDto.getGymId()); // Ensure gymId is set in AdminDto
 
-			return "redirect:/view-trainers"; // Redirect to the addplan page
+			return "redirect:/view-members"; // Redirect to the addplan page
 		} else {
 			model.addAttribute("error", "Invalid username or password!");
 			return "login"; // Return to login page with an error message
@@ -143,7 +183,7 @@ public class PageController {
 	public String showAddPlanForm(Model model) {
 		model.addAttribute("membershipPlan", new MembershipPlanDto());
 
-		return "addplan"; // Thymeleaf template name
+		return "add-plan"; // Thymeleaf template name
 	}
 
 	@PostMapping("/addplan")
@@ -172,19 +212,17 @@ public class PageController {
 		return "addplan";
 	}
 
-	
-
 	// Fetch membership plans for the gym
 	@GetMapping("/view-plans")
 	public String getPlans(HttpSession session, Model model) {
-		
+
 		Long gymId = (Long) session.getAttribute("gymId");
 		if (gymId == null) {
 			model.addAttribute("error", "Gym not found for the current admin.");
 			return "login"; // Return to plans page with error
 		}
 		List<MembershipPlanDto> membershipPlans = membershipPlanService.getPlansByGymId(gymId);
-	
+
 		model.addAttribute("membershipPlans", membershipPlans);
 		return "view-plans"; // Return to plans Thymeleaf template
 	}
@@ -218,44 +256,64 @@ public class PageController {
 		}
 	}
 
+	@GetMapping("/add-trainer")
+	public String showAddTrainerForm(Model model) {
+		model.addAttribute("trainerDto", new TrainerDto());
+		return "add-trainer"; // Returns the add-trainer.html Thymeleaf template
+	}
+
+	@PostMapping("/add-trainer")
+	public String addTrainer(@ModelAttribute TrainerDto trainerDto, Model model) {
+		try {
+			trainerService.addTrainer(trainerDto);
+			model.addAttribute("message", "Trainer added successfully.");
+			return "redirect:/trainer-list"; // Redirect to a list of trainers or another relevant page
+		} catch (IOException e) {
+			model.addAttribute("error", "Failed to add trainer. Please try again.");
+			return "add-trainer"; // Return to the add-trainer form with an error message
+		}
+	}
+
+	@GetMapping("/view-trainers")
+	public String getTrainers(Model model, HttpSession session) {
+		Long gymId = (Long) session.getAttribute("gymId");
+		System.out.println("Gym id in the session " + gymId);
+		if (gymId != null) {
+			System.out.println("Session not null");
+			List<TrainerDto> trainers = trainerService.getTrainersByGymId(gymId);
+			System.out.println(trainers);
+			model.addAttribute("trainers", trainers);
+			return "view-trainers"; // Thymeleaf template to display trainers
+		}
+		return "redirect:/login"; // Redirect to login if gymId is not found
+	}
+
+	@GetMapping("/fetch-trainer/{id}")
+	@ResponseBody
+	public MembershipPlanDto getTrainer(@PathVariable Long id) {
+		return membershipPlanService.getPlanById(id); // Directly return the DTO from the service
+	}
 	
-	
-	 @GetMapping("/add-trainer")
-	    public String showAddTrainerForm(Model model) {
-	        model.addAttribute("trainerDto", new TrainerDto());
-	        return "add-trainer"; // Returns the add-trainer.html Thymeleaf template
+	 @GetMapping("/view-members")
+	    public String getMembers(HttpSession session, Model model) {
+	        Long gymId = (Long) session.getAttribute("gymId");
+	        if (gymId == null) {
+	            return "redirect:/login"; // Redirect to login if gymId is not in the session
+	        }
+
+	        List<MemberDTO> members = memberService.getAllMembersByGymId(gymId);
+	        System.out.println(members);
+	        model.addAttribute("members", members);
+
+	        return "view-members"; // The name of the Thymeleaf template to render
 	    }
 
-	    @PostMapping("/add-trainer")
-	    public String addTrainer(@ModelAttribute TrainerDto trainerDto, Model model) {
-	        try {
-	            trainerService.addTrainer(trainerDto);
-	            model.addAttribute("message", "Trainer added successfully.");
-	            return "redirect:/trainer-list"; // Redirect to a list of trainers or another relevant page
-	        } catch (IOException e) {
-	            model.addAttribute("error", "Failed to add trainer. Please try again.");
-	            return "add-trainer"; // Return to the add-trainer form with an error message
-	        }
+	    @GetMapping("/view-members/{memberId}")
+	    public String getMemberDetails(@PathVariable("memberId") Long memberId, Model model) {
+	        MemberDTO member = memberService.getMemberById(memberId);
+	        model.addAttribute("member", member);
+
+	        return "member-details"; // The name of the Thymeleaf template to render
 	    }
 	
-	    @GetMapping("/view-trainers")
-	    public String getTrainers(Model model, HttpSession session) {
-	        Long gymId = (Long) session.getAttribute("gymId");
-	        System.out.println("Gym id in the session " +gymId);
-	        if (gymId != null) {
-	        	System.out.println("Session not null");
-	            List<TrainerDto> trainers = trainerService.getTrainersByGymId(gymId);
-	            System.out.println(trainers);
-	            model.addAttribute("trainers",trainers);
-	            return "view-trainers"; // Thymeleaf template to display trainers
-	        }
-	        return "redirect:/login"; // Redirect to login if gymId is not found
-	    }
-	    
-	    
-	    @GetMapping("/fetch-trainer/{id}")
-		@ResponseBody
-		public MembershipPlanDto getTrainer(@PathVariable Long id) {
-			return membershipPlanService.getPlanById(id); // Directly return the DTO from the service
-		}
 }

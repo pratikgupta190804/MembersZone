@@ -35,7 +35,7 @@ public class Member {
     private String planName;  // Plan name associated with the member
 
     @Column(name = "join_date", nullable = false)
-    private LocalDate joinDate = LocalDate.now();  // Join date (default to current date)
+    private LocalDate joinDate ;  // Join date (default to current date)
 
     @Column(name = "end_date")
     private LocalDate endDate;  // End date (to be calculated)
@@ -46,7 +46,7 @@ public class Member {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "gym_id", nullable = false)
-    private Admin gym;  // 
+    private Admin gymId;  // 
 
     // Getters and Setters
 
@@ -138,13 +138,7 @@ public class Member {
         this.membershipStatus = membershipStatus;
     }
 
-    public Admin getGym() {
-        return gym;
-    }
 
-    public void setGym(Admin gym) {
-        this.gym = gym;
-    }
 
     // Enum for Fees Status
     public enum FeesStatus {
@@ -163,4 +157,12 @@ public class Member {
         ACTIVE,
         INACTIVE
     }
+
+	public Admin getGymId() {
+		return gymId;
+	}
+
+	public void setGymId(Admin gymId) {
+		this.gymId = gymId;
+	}
 }
