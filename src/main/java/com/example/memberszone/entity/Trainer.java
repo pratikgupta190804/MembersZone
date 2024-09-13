@@ -4,103 +4,101 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "trainers")
 public class Trainer {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long trainerId;
-	
-	private Long gymId;
-	
-	private String name;
-	
-	private String email;
-	
-	private String phoneNumber;
-	
-	private String specialization;
-	
-	private Integer experience;
-	
-	private String certification;
-	
-	private String imageUrl;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long trainerId;
 
-	// Getters and Setters
+    @ManyToOne
+    @JoinColumn(name = "gym_id", nullable = false)
+    private Admin gym;
+    
+    private String name;
+    private String email;
+    private String phoneNumber;
+    private String specialization;
+    private Integer experience;
+    private String certification;
+    private String imageUrl;
 
-	public Long getTrainerId() {
-		return trainerId;
-	}
+    // Getters and Setters
 
-	public void setTrainerId(Long trainerId) {
-		this.trainerId = trainerId;
-	}
+    public Long getTrainerId() {
+        return trainerId;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public void setTrainerId(Long trainerId) {
+        this.trainerId = trainerId;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public Admin getGym() {
+        return gym;
+    }
 
-	public String getEmail() {
-		return email;
-	}
+    public void setGym(Admin gym) {
+        this.gym = gym;
+    }
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public Long getGymId() {
-		return gymId;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setGymId(Long gymId) {
-		this.gymId = gymId;
-	}
+    public String getEmail() {
+        return email;
+    }
 
-	public String getPhoneNumber() {
-		return phoneNumber;
-	}
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-	public void setPhoneNumber(String phoneNumber) {
-		this.phoneNumber = phoneNumber;
-	}
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
 
-	public String getSpecialization() {
-		return specialization;
-	}
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
 
-	public void setSpecialization(String specialization) {
-		this.specialization = specialization;
-	}
+    public String getSpecialization() {
+        return specialization;
+    }
 
-	public Integer getExperience() {
-		return experience;
-	}
+    public void setSpecialization(String specialization) {
+        this.specialization = specialization;
+    }
 
-	public void setExperience(Integer experience) {
-		this.experience = experience;
-	}
+    public Integer getExperience() {
+        return experience;
+    }
 
-	public String getCertification() {
-		return certification;
-	}
+    public void setExperience(Integer experience) {
+        this.experience = experience;
+    }
 
-	public void setCertification(String certification) {
-		this.certification = certification;
-	}
+    public String getCertification() {
+        return certification;
+    }
 
-	public String getImageUrl() {
-		return imageUrl;
-	}
+    public void setCertification(String certification) {
+        this.certification = certification;
+    }
 
-	public void setImageUrl(String imageUrl) {
-		this.imageUrl = imageUrl;
-	}
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 }

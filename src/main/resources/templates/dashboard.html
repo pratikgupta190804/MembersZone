@@ -1,220 +1,344 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
   <head>
-    <title>Admin Dashboard</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GymManage Dashboard</title>
     <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
       rel="stylesheet"
     />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css"
+    />
     <style>
-      body {
-        padding: 20px;
-        background-color: #f8f9fa; /* Light background */
-      }
-      .card {
-        border-radius: 0.5rem; /* Rounded corners for cards */
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-        height: 300px; /* Shorter card height */
-      }
-      .card-header {
-        font-size: 1.25rem;
-        font-weight: bold;
-        background-color: #343a40; /* Dark color */
-        color: #ffffff; /* White text */
-      }
-      .card-body {
-        overflow-y: auto; /* Allows scrolling in card body */
-      }
-      .navbar {
-        background-color: #343a40; /* Dark color */
-        padding: 1rem 2rem; /* Add padding */
-      }
-      .navbar-brand {
-        color: #ffffff; /* White text */
-        font-weight: bold;
+      .sidebar {
+        height: 100vh;
+        background-color: #f8f9fa;
       }
       .nav-link {
-        color: #ffffff; /* White text */
-        transition: color 0.2s ease;
+        color: #333;
       }
-      .nav-link:hover {
-        color: #adb5bd; /* Light gray on hover */
-      }
+      .nav-link:hover,
       .nav-link.active {
-        color: #adb5bd; /* Light gray for active link */
-      }
-      .btn-spacing {
-        margin-right: 10px; /* Spacing between buttons */
-        margin-bottom: 10px; /* Spacing between rows of buttons */
-      }
-      .row-equal {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 20px; /* Space between cards */
+        background-color: #e9ecef;
       }
       .card {
-        flex: 1 0 48%; /* Cards take up approximately half of the row width */
-        margin-bottom: 20px; /* Space between rows of cards */
+        transition: transform 0.2s;
       }
-      .navbar-expand-lg .navbar-nav {
-        margin-left: auto;
+      .card:hover {
+        transform: translateY(-5px);
       }
-      .navbar-nav li {
-        margin-right: 20px;
+      .quick-action {
+        transition: background-color 0.2s;
       }
-      .navbar-nav .nav-link {
-        margin-right: 20px;
-      }
-      .container-fluid {
-        max-width: 100%;
-        padding: 0;
-      }
-      .navbar-collapse {
-        flex-grow: 1;
-        justify-content: flex-end;
+      .quick-action:hover {
+        background-color: #f8f9fa;
       }
     </style>
   </head>
   <body>
-    <nav class="navbar navbar-expand-lg navbar-dark">
-      <div class="container-fluid">
-        <a class="navbar-brand" th:text="${gymName}">Gym Name</a>
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarSupportedContent"
-          aria-controls="navbarSupportedContent"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item">
-              <a class="nav-link active" th:href="@{/dashboard}">Dashboard</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" th:href="@{/view-plans}"
-                >Membership Plans</a
-              >
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" th:href="@{/view-members}">Members</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" th:href="@{/view-classes}">Classes</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" th:href="@{/view-trainers}">Trainers</a>
-            </li>
-          </ul>
-          <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-            <li class="nav-item">
-              <a class="nav-link" th:href="@{/logout}">Logout</a>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </nav>
-
-    <div class="container mt-4">
-      <h1 class="mb-4">Admin Dashboard</h1>
-
-      <div class="row-equal mb-4">
-        <!-- Membership Overview -->
-        <div class="card">
-          <div class="card-header">Membership Overview</div>
-          <div class="card-body">
-            <ul class="list-group">
-              <li class="list-group-item">Total Members: <span>350</span></li>
-              <li class="list-group-item">
-                Active Memberships: <span>320</span>
+    <div class="container-fluid">
+      <div class="row">
+        <!-- Sidebar -->
+        <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+          <div class="position-sticky pt-3">
+            <a
+              href="/"
+              class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none"
+            >
+              <span class="fs-4">GymManage</span>
+            </a>
+            <hr />
+            <ul class="nav flex-column">
+              <li class="nav-item">
+                <a class="nav-link active" href="#">
+                  <i class="bi bi-house-door"></i> Dashboard
+                </a>
               </li>
-              <li class="list-group-item">
-                Inactive Memberships: <span>30</span>
+              <li class="nav-item">
+                <a class="nav-link" href="#">
+                  <i class="bi bi-people"></i> Members
+                </a>
               </li>
-              <li class="list-group-item">Expiring Soon: <span>15</span></li>
-            </ul>
-          </div>
-        </div>
-
-        <!-- Membership Plans -->
-        <div class="card">
-          <div class="card-header">Membership Plans</div>
-          <div class="card-body">
-            <ul class="list-group">
-              <li class="list-group-item">
-                Basic Plan - 3 Months
-                <span class="badge bg-primary float-end">120</span>
+              <li class="nav-item">
+                <a class="nav-link" href="#">
+                  <i class="bi bi-credit-card"></i> Plans
+                </a>
               </li>
-              <li class="list-group-item">
-                Standard Plan - 6 Months
-                <span class="badge bg-primary float-end">80</span>
+              <li class="nav-item">
+                <a class="nav-link" href="#">
+                  <i class="bi bi-person-plus"></i> Trainers
+                </a>
               </li>
-              <li class="list-group-item">
-                Premium Plan - 12 Months
-                <span class="badge bg-primary float-end">50</span>
+              <li class="nav-item">
+                <a class="nav-link" href="#">
+                  <i class="bi bi-calendar-event"></i> Classes
+                </a>
               </li>
             </ul>
           </div>
-        </div>
-      </div>
+        </nav>
 
-      <div class="row-equal mb-4">
-        <!-- Financial Summary -->
-        <div class="card">
-          <div class="card-header">Financial Summary</div>
-          <div class="card-body">
-            <ul class="list-group">
-              <li class="list-group-item">Total Revenue: $25,000</li>
-              <li class="list-group-item">Payments Received: $22,500</li>
-              <li class="list-group-item">Outstanding Payments: $2,500</li>
-              <li class="list-group-item">
-                Monthly Trend: Increase of 5% this month
-              </li>
-            </ul>
+        <!-- Main content -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+          <div
+            class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom"
+          >
+            <h1 class="h2">Dashboard</h1>
+            <button
+              class="btn btn-primary d-md-none"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target=".sidebar"
+            >
+              <i class="bi bi-list"></i>
+            </button>
           </div>
-        </div>
 
-        <!-- Member Statistics -->
-        <div class="card">
-          <div class="card-header">Member Statistics</div>
-          <div class="card-body">
-            <ul class="list-group">
-              <li class="list-group-item">Total Members: 350</li>
-              <li class="list-group-item">Average Age: 28</li>
-              <li class="list-group-item">
-                Gender Distribution: 60% Female, 40% Male
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      <!-- Quick Actions -->
-      <div class="quick-actions">
-        <div class="card">
-          <div class="card-header">Quick Actions</div>
-          <div class="card-body">
-            <div class="d-flex justify-content-start">
-              <a href="/add-member" class="btn btn-primary btn-spacing"
-                >Add New Member</a
-              >
-              <a href="/create-plan" class="btn btn-success btn-spacing"
-                >Create Membership Plan</a
-              >
-              <a href="/schedule-class" class="btn btn-info btn-spacing"
-                >Schedule Class</a
-              >
-              <a href="/trainer" class="btn btn-info">Trainer Details</a>
+          <!-- Quick Stats -->
+          <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 mb-4">
+            <div class="col">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">Total Members</h5>
+                  <p class="card-text fs-2">1,234</p>
+                  <p class="card-text">
+                    <small class="text-muted">+10% from last month</small>
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">Revenue</h5>
+                  <p class="card-text fs-2">$23,456</p>
+                  <p class="card-text">
+                    <small class="text-muted">+5% from last month</small>
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">Active Plans</h5>
+                  <p class="card-text fs-2">789</p>
+                  <p class="card-text">
+                    <small class="text-muted">+2% from last month</small>
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">Classes Today</h5>
+                  <p class="card-text fs-2">15</p>
+                  <p class="card-text">
+                    <small class="text-muted">3 more than yesterday</small>
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
+
+          <!-- Member Statistics -->
+          <div class="row mb-4">
+            <div class="col-12">
+              <h2 class="h4 mb-3">Member Statistics</h2>
+              <div class="card">
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-md-4 mb-3">
+                      <h5 class="card-title">Active Members</h5>
+                      <p class="card-text fs-2">1,050</p>
+                      <p class="card-text">
+                        <small class="text-muted">85% of total members</small>
+                      </p>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                      <h5 class="card-title">New Members This Month</h5>
+                      <p class="card-text fs-2">78</p>
+                      <p class="card-text">
+                        <small class="text-muted">+15% from last month</small>
+                      </p>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                      <h5 class="card-title">Pending Fees</h5>
+                      <p class="card-text fs-2">$3,450</p>
+                      <p class="card-text">
+                        <small class="text-muted">From 45 members</small>
+                      </p>
+                    </div>
+                  </div>
+                  <div class="row mt-4">
+                    <div class="col-md-6 mb-3">
+                      <h5 class="card-title">Popular Plans</h5>
+                      <ul class="list-group">
+                        <li
+                          class="list-group-item d-flex justify-content-between align-items-center"
+                        >
+                          Gold Membership
+                          <span class="badge bg-primary rounded-pill">423</span>
+                        </li>
+                        <li
+                          class="list-group-item d-flex justify-content-between align-items-center"
+                        >
+                          Silver Membership
+                          <span class="badge bg-primary rounded-pill">287</span>
+                        </li>
+                        <li
+                          class="list-group-item d-flex justify-content-between align-items-center"
+                        >
+                          Bronze Membership
+                          <span class="badge bg-primary rounded-pill">164</span>
+                        </li>
+                      </ul>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                      <h5 class="card-title">Inactive Members</h5>
+                      <p class="card-text fs-2">184</p>
+                      <p class="card-text">
+                        <small class="text-muted">15% of total members</small>
+                      </p>
+                      <button class="btn btn-outline-primary btn-sm">
+                        Send Reactivation Email
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Actions -->
+          <div class="row mb-4">
+            <div class="col-12">
+              <h2 class="h4 mb-3">Quick Actions</h2>
+              <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+                <div class="col">
+                  <div class="quick-action p-3 border rounded">
+                    <h5><i class="bi bi-person-plus"></i> Add New Member</h5>
+                    <p class="mb-0">
+                      <small>Quickly register a new gym member</small>
+                    </p>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="quick-action p-3 border rounded">
+                    <h5><i class="bi bi-calendar-plus"></i> Schedule Class</h5>
+                    <p class="mb-0">
+                      <small>Create a new class on the schedule</small>
+                    </p>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="quick-action p-3 border rounded">
+                    <h5>
+                      <i class="bi bi-clipboard-check"></i> Create Membership
+                      Plan
+                    </h5>
+                    <p class="mb-0">
+                      <small>Design a new membership package</small>
+                    </p>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="quick-action p-3 border rounded">
+                    <h5><i class="bi bi-person-badge"></i> Trainer Details</h5>
+                    <p class="mb-0">
+                      <small>View or update trainer information</small>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent Activity and People Enrolled This Week for Classes -->
+          <div class="row">
+            <div class="col-12 col-lg-6 mb-4">
+              <div class="card">
+                <div class="card-header">Recent Activity</div>
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item">
+                    <div class="d-flex w-100 justify-content-between">
+                      <h6 class="mb-1">John Doe checked in</h6>
+                      <small>5 minutes ago</small>
+                    </div>
+                  </li>
+                  <li class="list-group-item">
+                    <div class="d-flex w-100 justify-content-between">
+                      <h6 class="mb-1">Jane Smith signed up for Yoga class</h6>
+                      <small>10 minutes ago</small>
+                    </div>
+                  </li>
+                  <li class="list-group-item">
+                    <div class="d-flex w-100 justify-content-between">
+                      <h6 class="mb-1">Mike Johnson renewed Gold membership</h6>
+                      <small>1 hour ago</small>
+                    </div>
+                  </li>
+                  <li class="list-group-item">
+                    <div class="d-flex w-100 justify-content-between">
+                      <h6 class="mb-1">
+                        Emily Brown cancelled Personal Training session
+                      </h6>
+                      <small>2 hours ago</small>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="col-12 col-lg-6 mb-4">
+              <div class="card">
+                <div class="card-header">
+                  People Enrolled This Week for Classes
+                </div>
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item">
+                    <div class="d-flex w-100 justify-content-between">
+                      <h6 class="mb-1">Yoga</h6>
+                      <span class="badge bg-primary rounded-pill">25</span>
+                    </div>
+                    <p class="mb-1">Most popular day: Monday</p>
+                    <small>5 new enrollments</small>
+                  </li>
+                  <li class="list-group-item">
+                    <div class="d-flex w-100 justify-content-between">
+                      <h6 class="mb-1">Spin</h6>
+                      <span class="badge bg-primary rounded-pill">18</span>
+                    </div>
+                    <p class="mb-1">Most popular day: Wednesday</p>
+                    <small>3 new enrollments</small>
+                  </li>
+                  <li class="list-group-item">
+                    <div class="d-flex w-100 justify-content-between">
+                      <h6 class="mb-1">HIIT</h6>
+                      <span class="badge bg-primary rounded-pill">20</span>
+                    </div>
+                    <p class="mb-1">Most popular day: Tuesday</p>
+                    <small>7 new enrollments</small>
+                  </li>
+                  <li class="list-group-item">
+                    <div class="d-flex w-100 justify-content-between">
+                      <h6 class="mb-1">Pilates</h6>
+                      <span class="badge bg-primary rounded-pill">15</span>
+                    </div>
+                    <p class="mb-1">Most popular day: Thursday</p>
+                    <small>2 new enrollments</small>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </main>
       </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
   </body>
 </html>
