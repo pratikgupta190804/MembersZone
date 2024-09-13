@@ -4,12 +4,12 @@ import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.memberszone.dto.MembershipPlanDto;
@@ -19,7 +19,8 @@ import com.example.memberszone.service.TrainerService;
 
 import jakarta.servlet.http.HttpSession;
 
-@RequestMapping("/")
+
+@Controller
 public class TrainerController {
 	@Autowired
 	private TrainerService trainerService;
@@ -47,9 +48,9 @@ public class TrainerController {
 	@GetMapping("/view-trainers")
 	public String getTrainers(Model model, HttpSession session) {
 		Long gymId = (Long) session.getAttribute("gymId");
-		System.out.println("Gym id in the session " + gymId);
+		
 		if (gymId != null) {
-			System.out.println("Session not null");
+			
 			List<TrainerDto> trainers = trainerService.getTrainersByGymId(gymId);
 			System.out.println(trainers);
 			model.addAttribute("trainers", trainers);

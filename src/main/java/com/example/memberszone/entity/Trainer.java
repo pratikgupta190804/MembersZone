@@ -13,13 +13,21 @@ public class Trainer {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long trainerId;
+	
 	private Long gymId;
+	
 	private String name;
+	
 	private String email;
+	
 	private String phoneNumber;
+	
 	private String specialization;
+	
 	private Integer experience;
+	
 	private String certification;
+	
 	private String imageUrl;
 
 	// Getters and Setters

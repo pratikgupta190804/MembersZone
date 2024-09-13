@@ -106,7 +106,18 @@ public class TrainerDto {
 		this.gymId = gymId;
 	}
 
-
+	public TrainerDto(Long gymId, Long trainerId, String name, String email, String phoneNumber, String specialization,
+			Integer experience, String certification, String imageUrl) {
+		this.gymId = gymId;
+		this.trainerId = trainerId;
+		this.name = name;
+		this.email = email;
+		this.phoneNumber = phoneNumber;
+		this.specialization = specialization;
+		this.experience = experience;
+		this.certification = certification;
+		this.imageUrl = imageUrl;
+	}
 
 	@Override
 	public String toString() {

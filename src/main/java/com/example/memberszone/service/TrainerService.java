@@ -43,14 +43,14 @@ public class TrainerService {
 	}
 
 	public List<TrainerDto> getTrainersByGymId(Long gymId) {
+		System.out.println("Method called");
 		List<Trainer> trainers = trainerRepository.findByGymId(gymId);
-		return trainers.stream()
-				.map(trainer -> new TrainerDto(trainer.getTrainerId(), trainer.getName(), trainer.getEmail(),
-						trainer.getPhoneNumber(), trainer.getSpecialization(), trainer.getExperience(),
-						trainer.getCertification(), trainer.getImageUrl()))
-				.collect(Collectors.toList());
+
+		// Return the list of TrainerDto including the gymId
+		return trainers.stream().map(trainer -> new TrainerDto(gymId, // Add gymId here
+				trainer.getTrainerId(), trainer.getName(), trainer.getEmail(), trainer.getPhoneNumber(),
+				trainer.getSpecialization(), trainer.getExperience(), trainer.getCertification(),
+				trainer.getImageUrl())).collect(Collectors.toList());
 	}
 
-
-	
 }
