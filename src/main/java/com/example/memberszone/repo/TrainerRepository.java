@@ -11,7 +11,5 @@ import org.springframework.stereotype.Repository;
 public interface TrainerRepository extends JpaRepository<Trainer, Long> {
 
 	List<Trainer> findByGymId(Long gymId);
-    // You can define custom query methods here if needed
-    // For example:
-    // Optional<Trainer> findByEmail(String email);
+   
 }
