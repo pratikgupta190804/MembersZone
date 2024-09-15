@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -17,18 +17,22 @@
         height: 100vh;
         background-color: #f8f9fa;
       }
+
       .nav-link {
         color: #333;
       }
+
       .nav-link:hover,
       .nav-link.active {
         background-color: #e9ecef;
       }
+
       .member-avatar {
         width: 40px;
         height: 40px;
         object-fit: cover;
       }
+
       .table-responsive {
         max-height: 600px;
         overflow-y: auto;
@@ -50,28 +54,31 @@
             <hr />
             <ul class="nav flex-column">
               <li class="nav-item">
-                <a class="nav-link" href="dashboard.html">
-                  <i class="bi bi-house-door"></i> Dashboard
+                <a class="nav-link" th:href="@{/dashboard}">
+                  <i class="bi bi-house-door"></i>
+                  Dashboard
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link active" href="members.html">
+                <a class="nav-link active" th:href="@{/view-members}">
                   <i class="bi bi-people"></i> Members
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#">
+                <a class="nav-link" th:href="@{/view-plans}">
                   <i class="bi bi-credit-card"></i> Plans
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#">
-                  <i class="bi bi-person-plus"></i> Trainers
+                <a class="nav-link" th:href="@{/view-trainers}">
+                  <i class="bi bi-person-plus"></i>
+                  Trainers
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#">
-                  <i class="bi bi-calendar-event"></i> Classes
+                <a class="nav-link" th:href="@{/view-classes}">
+                  <i class="bi bi-calendar-event"></i>
+                  Classes
                 </a>
               </li>
             </ul>
@@ -84,7 +91,7 @@
             class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom"
           >
             <h1 class="h2">Members</h1>
-            <a href="add-member.html" class="btn btn-primary">
+            <a th:href="@{/add-member}" class="btn btn-primary">
               <i class="bi bi-plus"></i> Add New Member
             </a>
           </div>
@@ -97,6 +104,7 @@
                   type="text"
                   class="form-control"
                   placeholder="Search members..."
+                  th:value="${searchTerm}"
                 />
                 <button class="btn btn-outline-secondary" type="button">
                   <i class="bi bi-search"></i>
@@ -106,8 +114,12 @@
             <div class="col-md-6">
               <select class="form-select" aria-label="Filter by status">
                 <option selected>All Members</option>
-                <option value="1">Active</option>
-                <option value="2">Inactive</option>
+                <option value="1" th:selected="${filterStatus == 'Active'}">
+                  Active
+                </option>
+                <option value="2" th:selected="${filterStatus == 'Inactive'}">
+                  Inactive
+                </option>
               </select>
             </div>
           </div>
@@ -118,210 +130,64 @@
               <thead>
                 <tr>
                   <th>Name</th>
-                  <th>Email</th>
+                  <th>Phone</th>
                   <th>Plan</th>
                   <th>Status</th>
+                  <th>Fees Status</th>
+                  <!-- New column -->
                   <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
-                <tr>
+                <tr th:each="member : ${members}">
                   <td>
                     <img
-                      src="https://api.dicebear.com/6.x/initials/svg?seed=John%20Doe"
-                      alt="John Doe"
+                      th:src="@{https://api.dicebear.com/6.x/initials/svg?seed=__${member.name}__}"
+                      alt="Member Avatar"
                       class="rounded-circle me-2 member-avatar"
                     />
-                    John Doe
+                    <span th:text="${member.name}"></span>
                   </td>
-                  <td>john@example.com</td>
-                  <td>Gold</td>
-                  <td><span class="badge bg-success">Active</span></td>
+                  <td
+                    th:text="${member.phone != null ? member.phone : 'No phone number'}"
+                  ></td>
+                  <td th:text="${member.planName}"></td>
+                  <td>
+                    <span
+                      th:class="${member.membershipStatus == 'Active' ? 'badge bg-success' : 'badge bg-danger'}"
+                      th:text="${member.membershipStatus}"
+                    ></span>
+                  </td>
+                  <td>
+                    <span
+                      th:class="${member.feesStatus == 'PAID' ? 'badge bg-success' : 'badge bg-warning'}"
+                      th:text="${member.feesStatus}"
+                    ></span>
+                  </td>
+                  <!-- New column data -->
                   <td>
                     <div class="btn-group">
-                      <button
-                        type="button"
+                      <a
+                        th:href="@{/members/{id}(id=${member.id})}"
                         class="btn btn-sm btn-outline-secondary"
+                        >View</a
                       >
-                        View
-                      </button>
-                      <button
-                        type="button"
+                      <a
+                        th:href="@{/members/edit/{id}(id=${member.id})}"
                         class="btn btn-sm btn-outline-secondary"
+                        >Edit</a
                       >
-                        Edit
-                      </button>
-                      <button
-                        type="button"
+                      <a
+                        th:href="@{/members/delete/{id}(id=${member.id})}"
                         class="btn btn-sm btn-outline-danger"
+                        >Delete</a
                       >
-                        Delete
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <img
-                      src="https://api.dicebear.com/6.x/initials/svg?seed=Jane%20Smith"
-                      alt="Jane Smith"
-                      class="rounded-circle me-2 member-avatar"
-                    />
-                    Jane Smith
-                  </td>
-                  <td>jane@example.com</td>
-                  <td>Silver</td>
-                  <td><span class="badge bg-success">Active</span></td>
-                  <td>
-                    <div class="btn-group">
-                      <button
-                        type="button"
-                        class="btn btn-sm btn-outline-secondary"
-                      >
-                        View
-                      </button>
-                      <button
-                        type="button"
-                        class="btn btn-sm btn-outline-secondary"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        type="button"
-                        class="btn btn-sm btn-outline-danger"
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <img
-                      src="https://api.dicebear.com/6.x/initials/svg?seed=Bob%20Johnson"
-                      alt="Bob Johnson"
-                      class="rounded-circle me-2 member-avatar"
-                    />
-                    Bob Johnson
-                  </td>
-                  <td>bob@example.com</td>
-                  <td>Bronze</td>
-                  <td><span class="badge bg-danger">Inactive</span></td>
-                  <td>
-                    <div class="btn-group">
-                      <button
-                        type="button"
-                        class="btn btn-sm btn-outline-secondary"
-                      >
-                        View
-                      </button>
-                      <button
-                        type="button"
-                        class="btn btn-sm btn-outline-secondary"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        type="button"
-                        class="btn btn-sm btn-outline-danger"
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <img
-                      src="https://api.dicebear.com/6.x/initials/svg?seed=Alice%20Brown"
-                      alt="Alice Brown"
-                      class="rounded-circle me-2 member-avatar"
-                    />
-                    Alice Brown
-                  </td>
-                  <td>alice@example.com</td>
-                  <td>Gold</td>
-                  <td><span class="badge bg-success">Active</span></td>
-                  <td>
-                    <div class="btn-group">
-                      <button
-                        type="button"
-                        class="btn btn-sm btn-outline-secondary"
-                      >
-                        View
-                      </button>
-                      <button
-                        type="button"
-                        class="btn btn-sm btn-outline-secondary"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        type="button"
-                        class="btn btn-sm btn-outline-danger"
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <img
-                      src="https://api.dicebear.com/6.x/initials/svg?seed=Charlie%20Davis"
-                      alt="Charlie Davis"
-                      class="rounded-circle me-2 member-avatar"
-                    />
-                    Charlie Davis
-                  </td>
-                  <td>charlie@example.com</td>
-                  <td>Silver</td>
-                  <td><span class="badge bg-success">Active</span></td>
-                  <td>
-                    <div class="btn-group">
-                      <button
-                        type="button"
-                        class="btn btn-sm btn-outline-secondary"
-                      >
-                        View
-                      </button>
-                      <button
-                        type="button"
-                        class="btn btn-sm btn-outline-secondary"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        type="button"
-                        class="btn btn-sm btn-outline-danger"
-                      >
-                        Delete
-                      </button>
                     </div>
                   </td>
                 </tr>
               </tbody>
             </table>
           </div>
-
-          <!-- Pagination -->
-          <nav aria-label="Member list navigation">
-            <ul class="pagination justify-content-center">
-              <li class="page-item disabled">
-                <a class="page-link" href="#" tabindex="-1" aria-disabled="true"
-                  >Previous</a
-                >
-              </li>
-              <li class="page-item active" aria-current="page">
-                <a class="page-link" href="#">1</a>
-              </li>
-              <li class="page-item"><a class="page-link" href="#">2</a></li>
-              <li class="page-item"><a class="page-link" href="#">3</a></li>
-              <li class="page-item">
-                <a class="page-link" href="#">Next</a>
-              </li>
-            </ul>
-          </nav>
         </main>
       </div>
     </div>

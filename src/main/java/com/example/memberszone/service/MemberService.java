@@ -1,22 +1,21 @@
 package com.example.memberszone.service;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import com.example.memberszone.dto.MemberDTO;
+import com.example.memberszone.dto.MemberDto;
+import com.example.memberszone.dto.MembershipPlanDto;
 import com.example.memberszone.entity.Admin;
 import com.example.memberszone.entity.Member;
-import com.example.memberszone.entity.Member.MembershipStatus;
+import com.example.memberszone.entity.MembershipPlan;
 import com.example.memberszone.repo.AdminRepository;
 import com.example.memberszone.repo.MemberRepository;
 import com.example.memberszone.repo.MembershipPlanRepository;
+
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class MemberService {
@@ -25,95 +24,128 @@ public class MemberService {
 	private MemberRepository memberRepository;
 
 	@Autowired
-	private MembershipPlanRepository membershipPlanRepository;
-
-	@Autowired
 	private AdminRepository adminRepository;
 
-	@Transactional
-	public void addMember(MemberDTO memberDTO, Long gymId) {
-		// Convert MemberDTO to Member entity
+	@Autowired
+	private MembershipPlanRepository membershipPlanRepository; // Assuming you have this repository
+
+	// Add a member by calculating the plan duration using the gymId
+	public void addMember(MemberDto memberDto) {
 		Member member = new Member();
-		member.setName(memberDTO.getName());
-		member.setEmail(memberDTO.getEmail());
-		member.setPhoneNumber(memberDTO.getPhoneNumber());
-		member.setAddress(memberDTO.getAddress());
-		member.setFeesStatus(Member.FeesStatus.valueOf(memberDTO.getFeesStatus()));
-		member.setPaymentMethod(Member.PaymentMethod.valueOf(memberDTO.getPaymentMethod()));
-		member.setPlanName(memberDTO.getPlanName());
 
-		// Handle null joinDate
-		LocalDate joinDate = convertToLocalDate(memberDTO.getJoinDate());
-		if (joinDate == null) {
-			joinDate = LocalDate.now(); // Use current date as a default if joinDate is null
-		}
-		member.setJoinDate(joinDate);
+		// Set the basic fields from DTO
+		member.setName(memberDto.getName());
+		member.setEmail(memberDto.getEmail());
+		member.setPhone(memberDto.getPhone());
+		member.setAddress(memberDto.getAddress());
+		member.setFeesStatus(memberDto.getFeesStatus());
+		member.setPaymentMethod(memberDto.getPaymentMethod());
+		member.setPlanName(memberDto.getPlanName());
 
-		// Calculate the end date using the non-null joinDate
-		member.setEndDate(calculateEndDate(joinDate, memberDTO.getPlanName()));
+		// Set the gymId using the provided gym ID in DTO
+		Admin gym = adminRepository.findById(memberDto.getGymId())
+				.orElseThrow(() -> new RuntimeException("Gym not found"));
+		
+		member.setGymId(gym);
 
-		LocalDate today = LocalDate.now();
-		if (member.getEndDate().isBefore(today)) {
-			member.setMembershipStatus(MembershipStatus.INACTIVE);
-		} else {
-			member.setMembershipStatus(MembershipStatus.ACTIVE);
-		}
+		// Set joinDate to current date
+		member.setJoinDate(LocalDate.now());
 
-		Admin admin = adminRepository.findById(gymId)
-				.orElseThrow(() -> new RuntimeException("Admin not found with ID: " + gymId));
-		member.setGymId(admin);
+		// Calculate plan duration based on gymId and plan name
+		int planMonths = calculatePlanDuration(memberDto.getGymId(), memberDto.getPlanName());
 
-		// Save the member
+		// Calculate endDate based on plan duration in months and update membership
+		// status
+		calculateEndDate(member, planMonths);
+
+		// Save the member to the database
 		memberRepository.save(member);
 	}
 
-	private LocalDate convertToLocalDate(String date) {
-		if (date == null || date.isEmpty()) {
-			return null; // Return null if date is empty or null
+	// Method to calculate plan duration based on gymId and planName
+	public int calculatePlanDuration(Long gymId, String planName) {
+		// Fetch the relevant membership plan for the given gym and plan name
+		MembershipPlan plan = membershipPlanRepository.findByGymIdAndPlanName(gymId, planName)
+				.orElseThrow(() -> new RuntimeException("Plan not found for the gym"));
+
+		// Return the plan duration in months using the `durationInMonths` field
+		return plan.getDurationInMonths();
+	}
+
+	private void calculateEndDate(Member member, int planMonths) {
+		// Calculate the end date based on the join date and plan duration
+		member.setEndDate(member.getJoinDate().plus(planMonths, ChronoUnit.MONTHS));
+		updateMembershipStatus(member);
+	}
+
+	private void updateMembershipStatus(Member member) {
+		// Update the membership status based on the current date and end date
+		if (LocalDate.now().isBefore(member.getEndDate())) {
+			member.setMembershipStatus("active");
+		} else {
+			member.setMembershipStatus("inactive");
 		}
-
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-		return LocalDate.parse(date, formatter);
 	}
 
-	private LocalDate calculateEndDate(LocalDate joinDate, String planName) {
-		int months = getPlanDuration(planName);
-		return joinDate.plusMonths(months);
+	public List<MembershipPlanDto> getPlansByGymId(Long gymId) {
+		List<MembershipPlan> plans = membershipPlanRepository.findByGymId(gymId);
+		return plans.stream().map(this::convertToDto).collect(Collectors.toList());
 	}
 
-	private int getPlanDuration(String planName) {
-		// Fetch the plan duration based on planName from MembershipPlanRepository
-		// For simplicity, returning a fixed duration
-		// Example: return membershipPlanRepository.findByName(planName).getDuration();
-		return 12; // Assuming a default duration of 12 months
+	// Convert MembershipPlan entity to MembershipPlanDto
+	private MembershipPlanDto convertToDto(MembershipPlan plan) {
+		MembershipPlanDto dto = new MembershipPlanDto();
+		dto.setPlanName(plan.getPlanName());
+		dto.setDurationInMonths(plan.getDurationInMonths());
+		// set other properties if needed
+		return dto;
 	}
+	// Method to get all members by gym ID
+    
+	  
+	 // Fetch members by gym ID
+    public List<MemberDto> getAllMembersByGymId(Long gymId) {
+        // Fetch the Admin entity based on gymId
+        Admin gymAdmin = adminRepository.findById(gymId)
+                                        .orElseThrow(() -> new IllegalArgumentException("Invalid gym ID"));
 
-	public List<MemberDTO> getAllMembersByGymId(Long gymId) {
-		Admin gymAdmin = adminRepository.findById(gymId)
-				.orElseThrow(() -> new RuntimeException("Admin not found with ID: " + gymId));
-		List<Member> members = memberRepository.findByGymId(gymAdmin);
+        // Fetch members associated with the Admin entity
+        List<Member> members = memberRepository.findByGymId(gymAdmin);
+        return members.stream().map(this::convertToDto).collect(Collectors.toList());
+    }
 
-		// Directly create MemberDTO objects from Member entities
-		return members.stream()
-				.map(member -> new MemberDTO(member.getId(), member.getName(), member.getEmail(),
-						member.getPhoneNumber(), member.getAddress(), member.getJoinDate(), member.getEndDate(),
-						member.getMembershipStatus().name(), // Convert enum to String
-						member.getFeesStatus().name(), // Convert enum to String
-						member.getPaymentMethod(), member.getPlanName()))
-				.collect(Collectors.toList());
-	}
+    // Convert Member entity to MemberDto
+    private MemberDto convertToDto(Member member) {
+        MemberDto memberDto = new MemberDto();
+        memberDto.setId(member.getId());
+        memberDto.setName(member.getName());
+        memberDto.setEmail(member.getEmail());
+        memberDto.setPhone(member.getPhone() != null ? member.getPhone() : "No phone number");
+        memberDto.setAddress(member.getAddress());
+        memberDto.setFeesStatus(member.getFeesStatus());
+        memberDto.setPaymentMethod(member.getPaymentMethod());
+        memberDto.setPlanName(member.getPlanName());
+        memberDto.setJoinDate(member.getJoinDate());
+        memberDto.setEndDate(member.getEndDate());
+        memberDto.setMembershipStatus(member.getMembershipStatus());
 
-	public MemberDTO getMemberById(Long memberId) {
-		Member member = memberRepository.findById(memberId)
-				.orElseThrow(() -> new RuntimeException("Member not found with ID: " + memberId));
+        // Calculate days left
+        if (member.getEndDate() != null) {
+            long daysLeft = calculateDaysLeft(member.getEndDate());
+            memberDto.setDaysLeft(daysLeft);
+        } else {
+            memberDto.setDaysLeft(0);
+        }
 
-		// Directly create a MemberDTO object from a Member entity
-		return new MemberDTO(member.getId(), member.getName(), member.getEmail(), member.getPhoneNumber(),
-				member.getAddress(), member.getJoinDate(), member.getEndDate(), member.getMembershipStatus().name(), // Convert
-																														// enum
-																														// to
-																														// String
-				member.getFeesStatus().name(), // Convert enum to String
-				member.getPaymentMethod(), member.getPlanName());
-	}
+        return memberDto;
+    }
+
+    // Method to calculate days left based on end date
+    public long calculateDaysLeft(LocalDate endDate) {
+        LocalDate currentDate = LocalDate.now();
+        if (endDate.isBefore(currentDate)) {
+            return 0;
+        }
+        return ChronoUnit.DAYS.between(currentDate, endDate);
+    }
 }

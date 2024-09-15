@@ -69,7 +69,7 @@ public class LoginController {
 			// Store gymId in the session after successful login
 			session.setAttribute("gymId", adminDto.getGymId()); // Ensure gymId is set in AdminDto
 
-			return "redirect:/view-trainers"; // Redirect to the addplan page
+			return "redirect:/dashboard"; // Redirect to the addplan page
 		} else {
 			model.addAttribute("error", "Invalid username or password!");
 			return "login"; // Return to login page with an error message

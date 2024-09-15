@@ -17,7 +17,7 @@
                     <h3>Add Member</h3>
                 </div>
                 <div class="card-body">
-                    <form th:action="@{/add-member}" th:object="${memberDTO}" method="post">
+                    <form th:action="@{/add-member}" th:object="${memberDto}" method="post">
 
                         <!-- Name Field -->
                         <div class="mb-3">
@@ -34,7 +34,7 @@
                         <!-- Phone Field -->
                         <div class="mb-3">
                             <label for="phone" class="form-label">Phone</label>
-                            <input type="text" class="form-control" id="phone" th:field="*{phoneNumber}" placeholder="Enter phone number" required>
+                            <input type="text" class="form-control" id="phone" th:field="*{phone}" placeholder="Enter phone number" required>
                         </div>
 
                         <!-- Address Field -->
@@ -67,6 +67,14 @@
                             <select class="form-select" id="planName" th:field="*{planName}" required>
                                 <option th:each="plan : ${membershipPlans}" th:value="${plan.planName}" th:text="${plan.planName}">Plan</option>
                             </select>
+                        </div>
+
+                        <!-- Error and Success Messages -->
+                        <div th:if="${error}" class="alert alert-danger">
+                            <p th:text="${error}"></p>
+                        </div>
+                        <div th:if="${message}" class="alert alert-success">
+                            <p th:text="${message}"></p>
                         </div>
 
                         <!-- Submit Button -->

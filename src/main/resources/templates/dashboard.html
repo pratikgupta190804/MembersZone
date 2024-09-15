@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -53,27 +53,27 @@
             <hr />
             <ul class="nav flex-column">
               <li class="nav-item">
-                <a class="nav-link active" href="#">
+                <a class="nav-link active" th:href="@{/dashboard}">
                   <i class="bi bi-house-door"></i> Dashboard
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#">
+                <a class="nav-link" th:href="@{/view-members}" >
                   <i class="bi bi-people"></i> Members
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#">
+                <a class="nav-link" th:href="@{/view-plans}">
                   <i class="bi bi-credit-card"></i> Plans
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#">
+                <a class="nav-link" th:href="@{/view-trainers}">
                   <i class="bi bi-person-plus"></i> Trainers
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#">
+                <a class="nav-link" th:href="@{/view-classes}">
                   <i class="bi bi-calendar-event"></i> Classes
                 </a>
               </li>

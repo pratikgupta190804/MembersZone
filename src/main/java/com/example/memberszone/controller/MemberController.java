@@ -1,86 +1,105 @@
 package com.example.memberszone.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.example.memberszone.dto.MemberDto;
+import com.example.memberszone.dto.MembershipPlanDto;
+import com.example.memberszone.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import com.example.memberszone.dto.MemberDTO;
-import com.example.memberszone.service.MemberService;
-import com.example.memberszone.service.MembershipPlanService;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import jakarta.servlet.http.HttpSession;
+import java.util.List;
 
-@RequestMapping("/")
+@Controller
 public class MemberController {
+
 	@Autowired
 	private MemberService memberService;
-	@Autowired
-	private MembershipPlanService membershipPlanService;
 
+	// Show the form to add a new member
 	@GetMapping("/add-member")
-	public String getAddMember(Model model, HttpSession session) {
-
-		// Retrieve the gymId from the session
-		Long gymId = (Long) session.getAttribute("gymId");
-
-		if (gymId != null) {
-			// Fetch membership plans for the gym using the gymId
-			model.addAttribute("membershipPlans", membershipPlanService.getPlansByGymId(gymId));
-		} else {
-			// Handle case when gymId is not found (optional)
-			model.addAttribute("membershipPlans", new ArrayList<>()); // Empty list or other logic
-		}
-
-		// Add a new MemberDTO to the model
-		model.addAttribute("memberDTO", new MemberDTO());
-
-		return "add-member";
-	}
-
-	@PostMapping("/add-member")
-	public String addMember(@ModelAttribute MemberDTO memberDTO, HttpSession session, Model model) {
-		// Retrieve the gymId from the session
-
-		Long gymId = (Long) session.getAttribute("gymId");
-
-		if (gymId != null) {
-			// Call the service to add the member
-			memberService.addMember(memberDTO, gymId);
-
-			// Redirect to a success page or list of members
-			return "redirect:/home";
-		} else {
-			// Handle case when gymId is not found (optional)
-			model.addAttribute("error", "Gym ID is not available.");
-			return "add-member";
-		}
-	}
-	@GetMapping("/view-members")
-	public String getMembers(HttpSession session, Model model) {
+	public String showAddMemberForm(Model model, HttpSession session) {
+		// Check if gym ID is present in the session
 		Long gymId = (Long) session.getAttribute("gymId");
 		if (gymId == null) {
-			return "redirect:/login"; // Redirect to login if gymId is not in the session
+			return "redirect:/login"; // Redirect to login or another page if gym ID is not found
 		}
 
-		List<MemberDTO> members = memberService.getAllMembersByGymId(gymId);
-		System.out.println(members);
-		model.addAttribute("members", members);
+		// Initialize an empty MemberDto and add it to the model
+		model.addAttribute("memberDto", new MemberDto());
 
-		return "view-members"; // The name of the Thymeleaf template to render
+		// Fetch membership plans for the gym and add to the model
+		List<MembershipPlanDto> membershipPlans = memberService.getPlansByGymId(gymId);
+		model.addAttribute("membershipPlans", membershipPlans);
+
+		return "add-member"; // The name of the Thymeleaf template for the add member form
 	}
 
-	@GetMapping("/view-members/{memberId}")
-	public String getMemberDetails(@PathVariable("memberId") Long memberId, Model model) {
-		MemberDTO member = memberService.getMemberById(memberId);
-		model.addAttribute("member", member);
+	// Handle POST request to add a member
+	@PostMapping("/add-member")
+	public String addMember(@ModelAttribute("memberDto") MemberDto memberDto, HttpSession session, Model model) {
+		// Retrieve gym ID from the session
+		Long gymId = (Long) session.getAttribute("gymId");
+		if (gymId == null) {
+			model.addAttribute("error", "Gym ID not found in session. Please log in again.");
+			return "error-page"; // Redirect to an error page or login page
+		}
 
-		return "member-details"; // The name of the Thymeleaf template to render
+		// Set the gym ID in the DTO
+		memberDto.setGymId(gymId);
+
+		try {
+			// Add the member using the service
+			memberService.addMember(memberDto);
+			model.addAttribute("message", "Member successfully added!");
+		} catch (Exception e) {
+			model.addAttribute("error", "An error occurred while adding the member: " + e.getMessage());
+		}
+
+		return "redirect:/add-member"; // Redirect to the members listing page or another page
 	}
+
+	
+	@GetMapping("/view-members")
+	public String getAllMembers(HttpSession session, 
+	                            @RequestParam(value = "searchTerm", required = false) String searchTerm,
+	                            @RequestParam(value = "filterStatus", required = false) String filterStatus,
+	                            Model model) {
+	    // Retrieve gym ID from session
+	    Long gymId = (Long) session.getAttribute("gymId");
+
+	    if (gymId == null) {
+	        // Handle case where gym ID is not available in session
+	        model.addAttribute("error", "Gym ID not found in session.");
+	        return "error"; // Redirect to an error page or handle as needed
+	    }
+
+	    // Fetch members based on gym ID
+	    List<MemberDto> members = memberService.getAllMembersByGymId(gymId);
+	    
+	    // Calculate days left for each member
+	    for (MemberDto member : members) {
+	        long daysLeft = 0;
+			try {
+				daysLeft = memberService.calculateDaysLeft(member.getEndDate());
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	        member.setDaysLeft(daysLeft); // Assuming you have a setDaysLeft method in MemberDto
+	    }
+
+	    // Add attributes to the model
+	    model.addAttribute("members", members);
+	    model.addAttribute("searchTerm", searchTerm);
+	    model.addAttribute("filterStatus", filterStatus);
+
+	    // Return Thymeleaf template name
+	    return "view-members"; // Assuming the Thymeleaf template is named 'view-members.html'
+	}
+
 }
