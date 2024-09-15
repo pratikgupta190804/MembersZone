@@ -32,6 +32,7 @@ public class MemberShipPlanController {
 
 		return "add-plan"; // Thymeleaf template name
 	}
+	
 	@PostMapping("/addplan")
 	public String addMembershipPlan(@ModelAttribute MembershipPlanDto membershipPlanDto, HttpSession session,
 			Model model) {
