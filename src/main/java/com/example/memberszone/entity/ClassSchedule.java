@@ -9,16 +9,22 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
+@Table(name = "class_schedule")
 public class ClassSchedule {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(nullable = false)
     private Long id;
 
     @Column(nullable = false)
     private String name;
+    
+    @Column(nullable=false,name = "duration")
+    private String duration;
 
     @Column(nullable = false)
     private String email;
@@ -32,8 +38,9 @@ public class ClassSchedule {
     @Column(nullable = false)
     private LocalDateTime classDateTime;
 
-    @Column(nullable = false)
-    private String instructorName;
+  
+    @Column(name="instructorName")
+    private String instructorName; 
 
     @Column(nullable = false)
     private LocalDateTime enrollmentDate;
@@ -105,13 +112,7 @@ public class ClassSchedule {
         this.classDateTime = classDateTime;
     }
 
-    public String getInstructorName() {
-        return instructorName;
-    }
-
-    public void setInstructorName(String instructorName) {
-        this.instructorName = instructorName;
-    }
+    
 
     public LocalDateTime getEnrollmentDate() {
         return enrollmentDate;
@@ -120,4 +121,27 @@ public class ClassSchedule {
     public void setEnrollmentDate(LocalDateTime enrollmentDate) {
         this.enrollmentDate = enrollmentDate;
     }
+
+	public String getInstructorName() {
+		return instructorName;
+	}
+
+	public void setInstructorName(String instructorName) {
+		this.instructorName = instructorName;
+	}
+
+	public String getDuration() {
+		return duration;
+	}
+
+	public void setDuration(String duration) {
+		this.duration = duration;
+	}
+	@Override
+	public String toString() {
+		return "ClassScheduleDto [id=" + id + ", name=" + name + ", email=" + email + ", phoneNumber=" + phoneNumber
+				+ ", className=" + className + ", classDateTime=" + classDateTime + ", instructorName=" + instructorName
+				+ ", enrollmentDate=" + enrollmentDate + ", gymId=" + gymId + ", duration=" + duration + "]";
+	}
 }
+

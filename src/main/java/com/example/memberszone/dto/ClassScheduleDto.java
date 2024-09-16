@@ -13,6 +13,7 @@ public class ClassScheduleDto {
 	private String instructorName;
 	private LocalDateTime enrollmentDate;
 	private Long gymId;
+	private String duration;
 
 	// Default constructor
 	public ClassScheduleDto() {
@@ -102,5 +103,20 @@ public class ClassScheduleDto {
 
 	public void setEnrollmentDate(LocalDateTime enrollmentDate) {
 		this.enrollmentDate = enrollmentDate;
+	}
+	
+	public String getDuration() {
+		return duration;
+	}
+
+	public void setDuration(String duration) {
+		this.duration = duration;
+	}
+
+	@Override
+	public String toString() {
+		return "ClassScheduleDto [id=" + id + ", name=" + name + ", email=" + email + ", phoneNumber=" + phoneNumber
+				+ ", className=" + className + ", classDateTime=" + classDateTime + ", instructorName=" + instructorName
+				+ ", enrollmentDate=" + enrollmentDate + ", gymId=" + gymId + ", duration=" + duration + "]";
 	}
 }

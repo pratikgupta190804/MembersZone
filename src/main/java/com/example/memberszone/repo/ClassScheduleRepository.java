@@ -24,4 +24,6 @@ public interface ClassScheduleRepository extends JpaRepository<ClassSchedule, Lo
 
     // Find all class schedules for a specific date and time
     List<ClassSchedule> findByClassDateTime(LocalDateTime classDateTime);
+    
+    List<ClassSchedule> findByGymId_Id(Long gymId);
 }
