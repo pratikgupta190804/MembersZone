@@ -1,5 +1,6 @@
 package com.example.memberszone.service;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -8,11 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.memberszone.dto.ClassScheduleDto;
-import com.example.memberszone.dto.MembershipPlanDto;
 import com.example.memberszone.dto.TrainerDto;
 import com.example.memberszone.entity.Admin;
 import com.example.memberszone.entity.ClassSchedule;
-import com.example.memberszone.entity.MembershipPlan;
 import com.example.memberszone.entity.Trainer;
 import com.example.memberszone.repo.AdminRepository;
 import com.example.memberszone.repo.ClassScheduleRepository;
@@ -64,11 +63,10 @@ public class ClassScheduleService {
 		return dto;
 	}
 
-	/*
-	 * Trainer trainer = trainerRepository.findByName(classScheduleDto.getName())
-	 * .orElseThrow(() -> new RuntimeException("Trainer not found"));
-	 * 
-	 */
+	public List<ClassScheduleDto> getClassScheduleById(Long gymId) {
+		List<ClassSchedule> classes = classScheduleRepository.findByGymId_Id(gymId);
+		return classes.stream().map(this::convertToDto).collect(Collectors.toList());
+	}
 
 	public List<TrainerDto> getTrainerByGymId(Long gymId) {
 		List<Trainer> plans = trainerRepository.findByGymId(gymId);
@@ -79,8 +77,36 @@ public class ClassScheduleService {
 		TrainerDto dto = new TrainerDto();
 		dto.setName(trainer.getName());
 
-		// set other properties if needed
 		return dto;
 	}
 
+	public void deleteClassSchedule(Long gymId) {
+		if (classScheduleRepository.existsById(gymId)) {
+			classScheduleRepository.deleteById(gymId);
+		} else {
+			throw new RuntimeException("Trainer not found");
+		}
+	}
+
+	public ClassScheduleDto getClassById(Long gymId) {
+		ClassSchedule classSchedule = classScheduleRepository.findById(gymId)
+				.orElseThrow(() -> new RuntimeException("Trainer not found"));
+
+		return convertToDto(classSchedule);
+	}
+
+	public void updateClass(ClassScheduleDto classScheduleDto) throws IOException {
+		ClassSchedule existingClass = classScheduleRepository.findById(classScheduleDto.getId())
+				.orElseThrow(() -> new RuntimeException("Trainer not found"));
+
+		existingClass.setName(classScheduleDto.getName());
+		existingClass.setEmail(classScheduleDto.getEmail());
+		existingClass.setPhoneNumber(classScheduleDto.getPhoneNumber());
+		existingClass.setClassName(classScheduleDto.getClassName());
+		existingClass.setInstructorName(classScheduleDto.getInstructorName());
+		existingClass.setClassDateTime(classScheduleDto.getClassDateTime());
+		existingClass.setDuration(classScheduleDto.getDuration());
+
+		classScheduleRepository.save(existingClass);
+	}
 }
