@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.example.memberszone.dto.ClassScheduleDto;
 import com.example.memberszone.dto.TrainerDto;
@@ -63,6 +62,7 @@ public class ClassScheduleController {
 			// Add the member using the service
 
 			classScheduleService.addClassSchedule(classScheduleDto, gymId);
+			System.out.println(classScheduleDto);
 			model.addAttribute("message", "Added for class successfully !");
 		} catch (Exception e) {
 			model.addAttribute("error", "An error occurred while adding the member: " + e.getMessage());
@@ -71,37 +71,45 @@ public class ClassScheduleController {
 		return "classes";
 	}
 
-	@GetMapping("/fetch-classSchedule/{id}")
+	@GetMapping("/fetch-class/{id}")
 	public ResponseEntity<ClassScheduleDto> getClassSchedule(@PathVariable Long id) {
+		System.out.println("method reached" + id);
 		ClassScheduleDto classDto = classScheduleService.getClassById(id);
+		System.out.println(classDto);
 		return ResponseEntity.ok(classDto);
 	}
 
 	@DeleteMapping("/delete-class/{id}")
 	public ResponseEntity<String> deleteClass(@PathVariable Long id) {
 		classScheduleService.deleteClassSchedule(id);
-		return ResponseEntity.ok("Trainer deleted successfully");
+		return ResponseEntity.ok("Class Booking  deleted successfully");
 	}
-
 	@PostMapping("/update-class")
-	public ResponseEntity<String> updateClass(@RequestParam("id") Long classId,
-			@RequestParam("name") String name, @RequestParam("email") String email,
-			@RequestParam("phoneNumber") String phoneNumber, @RequestParam("classDateTime") LocalDateTime classDateTime,
-			@RequestParam("className") String className, @RequestParam("instructorName") String instructorName,
-			@RequestParam("duration") String duration
-
+	public ResponseEntity<String> updateClass(
+	        @RequestParam(value = "id", required = true) Long classId,
+	        @RequestParam("name") String name,
+	        @RequestParam("email") String email,
+	        @RequestParam("phoneNumber") String phoneNumber,
+	        @RequestParam("classDateTime") String classDateTime,
+	        @RequestParam("className") String className,
+	        @RequestParam("instructorName") String instructorName,
+	        @RequestParam("duration") String duration
 	) throws IOException {
-		ClassScheduleDto classScheduleDto = new ClassScheduleDto();
-		classScheduleDto.setId(classId);
-		classScheduleDto.setName(name);
-		classScheduleDto.setEmail(email);
-		classScheduleDto.setPhoneNumber(phoneNumber);
-		classScheduleDto.setClassName(className);
-		classScheduleDto.setInstructorName(instructorName);
-		classScheduleDto.setClassDateTime(classDateTime);
-		classScheduleDto.setDuration(duration);
+	    if (classId == null) {
+	        return ResponseEntity.badRequest().body("Class ID is required");
+	    }
 
-		classScheduleService.updateClass(classScheduleDto);
-		return ResponseEntity.ok("Trainer updated successfully");
+	    ClassScheduleDto classScheduleDto = new ClassScheduleDto();
+	    classScheduleDto.setId(classId);
+	    classScheduleDto.setName(name);
+	    classScheduleDto.setEmail(email);
+	    classScheduleDto.setPhoneNumber(phoneNumber);
+	    classScheduleDto.setClassName(className);
+	    classScheduleDto.setInstructorName(instructorName);
+	    classScheduleDto.setClassDateTime(LocalDateTime.parse(classDateTime));
+	    classScheduleDto.setDuration(duration);
+
+	    classScheduleService.updateClass(classScheduleDto);
+	    return ResponseEntity.ok("Class updated successfully");
 	}
 }

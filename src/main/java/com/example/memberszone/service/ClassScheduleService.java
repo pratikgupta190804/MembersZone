@@ -88,9 +88,10 @@ public class ClassScheduleService {
 		}
 	}
 
-	public ClassScheduleDto getClassById(Long gymId) {
-		ClassSchedule classSchedule = classScheduleRepository.findById(gymId)
-				.orElseThrow(() -> new RuntimeException("Trainer not found"));
+	public ClassScheduleDto getClassById(Long id) {
+		ClassSchedule classSchedule = classScheduleRepository.findById(id)
+				.orElseThrow(() -> new RuntimeException("Class not found"));
+		System.out.println(classSchedule);
 
 		return convertToDto(classSchedule);
 	}
