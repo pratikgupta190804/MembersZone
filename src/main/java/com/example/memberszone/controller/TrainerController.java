@@ -25,21 +25,19 @@ public class TrainerController {
 	@Autowired
 	private TrainerService trainerService;
 
-	@GetMapping("/add-trainer")
-	public String showAddTrainerForm(Model model) {
-		model.addAttribute("trainerDto", new TrainerDto());
-		return "add-trainer"; // Returns the add-trainer.html Thymeleaf template
-	}
-
-	@PostMapping("/add-trainer")
-	public String addTrainer(@ModelAttribute TrainerDto trainerDto, Model model) {
+	@PostMapping("view-trainers/add-trainer")
+	public String addTrainer(@ModelAttribute TrainerDto trainerDto,HttpSession session, Model model) {
+		Long gymId = (Long) session.getAttribute("gymId");
+		if (gymId == null) {
+			return "redirect:/login"; // Redirect to login or another page if gym ID is not found
+		}
 		try {
 			trainerService.addTrainer(trainerDto);
 			model.addAttribute("message", "Trainer added successfully.");
-			return "redirect:/trainer-list"; // Redirect to a list of trainers or another relevant page
+			return "redirect:/view-trainers"; // Redirect to a list of trainers or another relevant page
 		} catch (IOException e) {
 			model.addAttribute("error", "Failed to add trainer. Please try again.");
-			return "add-trainer"; // Return to the add-trainer form with an error message
+			return "view-trainers"; // Return to the add-trainer form with an error message
 		}
 	}
 
@@ -57,7 +55,7 @@ public class TrainerController {
 
 		// Add trainers to the model
 		model.addAttribute("trainers", trainers);
-
+		model.addAttribute("trainerDto", new TrainerDto());
 		// Return the Thymeleaf view name (trainers.html)
 		return "view-trainers";
 	}

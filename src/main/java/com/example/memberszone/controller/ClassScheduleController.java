@@ -62,7 +62,7 @@ public class ClassScheduleController {
 			// Add the member using the service
 
 			classScheduleService.addClassSchedule(classScheduleDto, gymId);
-			System.out.println(classScheduleDto);
+		
 			model.addAttribute("message", "Added for class successfully !");
 		} catch (Exception e) {
 			model.addAttribute("error", "An error occurred while adding the member: " + e.getMessage());

@@ -26,21 +26,13 @@ public class MemberShipPlanController {
 	@Autowired
 	private MembershipPlanService membershipPlanService;
 
-	@GetMapping("/addplan")
-	public String showAddPlanForm(Model model) {
-		model.addAttribute("membershipPlan", new MembershipPlanDto());
-
-		return "add-plan"; // Thymeleaf template name
-	}
-	
-	@PostMapping("/addplan")
+	@PostMapping("view-plans/addplan")
 	public String addMembershipPlan(@ModelAttribute MembershipPlanDto membershipPlanDto, HttpSession session,
 			Model model) {
 
 		// Retrieve gymId from session
 		Long gymId = (Long) session.getAttribute("gymId");
 
-		System.out.println(gymId);
 		if (gymId != null) {
 			// Set the gymId in the DTO before saving
 			membershipPlanDto.setGymId(gymId);
@@ -56,50 +48,51 @@ public class MemberShipPlanController {
 			model.addAttribute("error", "Unable to determine gym for the logged-in admin.");
 		}
 
-		return "addplan";
+		return "view-plans";
 	}
+
 	// Fetch membership plans for the gym
-		@GetMapping("/view-plans")
-		public String getPlans(HttpSession session, Model model) {
+	@GetMapping("/view-plans")
+	public String getPlans(HttpSession session, Model model) {
 
-			Long gymId = (Long) session.getAttribute("gymId");
-			if (gymId == null) {
-				model.addAttribute("error", "Gym not found for the current admin.");
-				return "login"; // Return to plans page with error
-			}
-			List<MembershipPlanDto> membershipPlans = membershipPlanService.getPlansByGymId(gymId);
-
-			model.addAttribute("membershipPlans", membershipPlans);
-			return "view-plans"; // Return to plans Thymeleaf template
+		Long gymId = (Long) session.getAttribute("gymId");
+		if (gymId == null) {
+			model.addAttribute("error", "Gym not found for the current admin.");
+			return "login"; // Return to plans page with error
 		}
+		List<MembershipPlanDto> membershipPlans = membershipPlanService.getPlansByGymId(gymId);
+		model.addAttribute("membershipPlan", new MembershipPlanDto());
+		model.addAttribute("membershipPlans", membershipPlans);
+		return "view-plans"; // Return to plans Thymeleaf template
+	}
 
-		// Delete a membership plan (AJAX)
-		@DeleteMapping("/delete-plan/{id}")
-		@ResponseBody
-		public ResponseEntity<String> deletePlan(@PathVariable Long id) {
-			try {
-				membershipPlanService.deletePlan(id);
-				return new ResponseEntity<>("Plan deleted successfully", HttpStatus.OK);
-			} catch (Exception e) {
-				return new ResponseEntity<>("Error deleting plan", HttpStatus.INTERNAL_SERVER_ERROR);
-			}
+	// Delete a membership plan (AJAX)
+	@DeleteMapping("/delete-plan/{id}")
+	@ResponseBody
+	public ResponseEntity<String> deletePlan(@PathVariable Long id) {
+		try {
+			membershipPlanService.deletePlan(id);
+			return new ResponseEntity<>("Plan deleted successfully", HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>("Error deleting plan", HttpStatus.INTERNAL_SERVER_ERROR);
 		}
+	}
 
-		@GetMapping("/fetch-plan/{id}")
-		@ResponseBody
-		public MembershipPlanDto getPlan(@PathVariable Long id) {
-			return membershipPlanService.getPlanById(id); // Directly return the DTO from the service
-		}
+	@GetMapping("/fetch-plan/{id}")
+	@ResponseBody
+	public MembershipPlanDto getPlan(@PathVariable Long id) {
+		return membershipPlanService.getPlanById(id); // Directly return the DTO from the service
+	}
 
-		@PostMapping("/update-plan")
-		@ResponseBody
-		public ResponseEntity<?> updatePlan(@ModelAttribute MembershipPlanDto membershipPlanDto) {
-			try {
-				membershipPlanService.updatePlan(membershipPlanDto);
-				return ResponseEntity.ok().body("Plan updated successfully");
-			} catch (Exception e) {
-				return ResponseEntity.badRequest().body("Error updating plan: " + e.getMessage());
-			}
+	@PostMapping("/update-plan")
+	@ResponseBody
+	public ResponseEntity<?> updatePlan(@ModelAttribute MembershipPlanDto membershipPlanDto) {
+		try {
+			membershipPlanService.updatePlan(membershipPlanDto);
+			return ResponseEntity.ok().body("Plan updated successfully");
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().body("Error updating plan: " + e.getMessage());
 		}
+	}
 
 }
