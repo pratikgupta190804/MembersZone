@@ -144,4 +144,12 @@ public class MemberDto {
 	public void setDaysLeft(long daysLeft) {
 		this.daysLeft = daysLeft;
 	}
+
+	@Override
+	public String toString() {
+		return "MemberDto [id=" + id + ", name=" + name + ", email=" + email + ", phone=" + phone + ", address="
+				+ address + ", feesStatus=" + feesStatus + ", paymentMethod=" + paymentMethod + ", planName=" + planName
+				+ ", joinDate=" + joinDate + ", endDate=" + endDate + ", membershipStatus=" + membershipStatus
+				+ ", gymId=" + gymId + ", daysLeft=" + daysLeft + "]";
+	}
 }

@@ -1,8 +1,7 @@
 package com.example.memberszone.controller;
 
-import com.example.memberszone.dto.MemberDto;
-import com.example.memberszone.dto.MembershipPlanDto;
-import com.example.memberszone.service.MemberService;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,8 +10,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.example.memberszone.dto.MemberDto;
+import com.example.memberszone.dto.MembershipPlanDto;
+import com.example.memberszone.service.MemberService;
+
 import jakarta.servlet.http.HttpSession;
-import java.util.List;
 
 @Controller
 public class MemberController {
@@ -53,6 +55,7 @@ public class MemberController {
 		memberDto.setGymId(gymId);
 
 		try {
+			System.out.println(memberDto);
 			// Add the member using the service
 			memberService.addMember(memberDto);
 			model.addAttribute("message", "Member successfully added!");

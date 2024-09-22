@@ -1,4 +1,5 @@
 package com.example.memberszone.entity;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -16,159 +17,147 @@ import java.time.temporal.ChronoUnit;
 @Table(name = "members")
 public class Member {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    private String name;
-    @Column(name = "daysleft")
-    private long daysLeft; 
-    
-    private String email;
-    @Column(name = "phone")
-    private String phone;
+	private String name;
+	@Column(name = "daysleft")		
+	private long daysLeft;
 
-    private String address;
+	private String email;
+	@Column(name = "phone")
+	private String phone;
 
-    @Column(name = "fees_status")
-    private String feesStatus; // Either "active" or "inactive"
+	private String address;
 
-    @Column(name = "payment_method")
-    private String paymentMethod; // Either "cash" or "online"
+	@Column(name = "fees_status")
+	private String feesStatus; // Either "active" or "inactive"
 
-    @Column(name = "plan_name")
-    private String planName;
+	@Column(name = "payment_method")
+	private String paymentMethod; // Either "cash" or "online"
 
-    @Column(name = "join_date")
-    private LocalDate joinDate; // Current date at the time of creation
+	@Column(name = "plan_name")
+	private String planName;
 
-    @Column(name = "end_date")
-    private LocalDate endDate; // Calculated using joinDate and plan duration
+	@Column(name = "join_date")
+	private LocalDate joinDate; // Current date at the time of creation
 
-    @Column(name = "membership_status")
-    private String membershipStatus; // Either "active" or "inactive" based on joinDate and endDate
+	@Column(name = "end_date")
+	private LocalDate endDate; // Calculated using joinDate and plan duration
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "gym_id", nullable = false)
-    private Admin gymId;
+	@Column(name = "membership_status")
+	private String membershipStatus; // Either "active" or "inactive" based on joinDate and endDate
 
-    // Constructors, Getters, and Setters
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "gym_id", nullable = false)
+	private Admin gymId;
 
-    public Member() {
-        // Set join date to current date
-        this.joinDate = LocalDate.now();
-    }
+	// Constructors, Getters, and Setters
 
-    public void calculateEndDate(int planMonths) {
-        // Calculate end date based on join date and plan duration
-        this.endDate = this.joinDate.plus(planMonths, ChronoUnit.MONTHS);
-        updateMembershipStatus();
-    }
+	// Getters and Setters for all fields
 
-    public void updateMembershipStatus() {
-        // Update membership status based on current date
-        if (LocalDate.now().isBefore(this.endDate)) {
-            this.membershipStatus = "active";
-        } else {
-            this.membershipStatus = "inactive";
-        }
-    }
+	public Long getId() {
+		return id;
+	}
 
-    // Getters and Setters for all fields
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public Long getId() {
-        return id;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public String getEmail() {
+		return email;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public void setEmail(String email) {
+		this.email = email;
+	}
 
-    public String getEmail() {
-        return email;
-    }
+	public String getPhone() {
+		return phone;
+	}
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
 
-    public String getPhone() {
-        return phone;
-    }
+	public String getAddress() {
+		return address;
+	}
 
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
+	public void setAddress(String address) {
+		this.address = address;
+	}
 
-    public String getAddress() {
-        return address;
-    }
+	public String getFeesStatus() {
+		return feesStatus;
+	}
 
-    public void setAddress(String address) {
-        this.address = address;
-    }
+	public void setFeesStatus(String feesStatus) {
+		this.feesStatus = feesStatus;
+	}
 
-    public String getFeesStatus() {
-        return feesStatus;
-    }
+	public String getPaymentMethod() {
+		return paymentMethod;
+	}
 
-    public void setFeesStatus(String feesStatus) {
-        this.feesStatus = feesStatus;
-    }
+	public void setPaymentMethod(String paymentMethod) {
+		this.paymentMethod = paymentMethod;
+	}
 
-    public String getPaymentMethod() {
-        return paymentMethod;
-    }
+	public String getPlanName() {
+		return planName;
+	}
 
-    public void setPaymentMethod(String paymentMethod) {
-        this.paymentMethod = paymentMethod;
-    }
+	public void setPlanName(String planName) {
+		this.planName = planName;
+	}
 
-    public String getPlanName() {
-        return planName;
-    }
+	public LocalDate getJoinDate() {
+		return joinDate;
+	}
 
-    public void setPlanName(String planName) {
-        this.planName = planName;
-    }
+	public void setJoinDate(LocalDate joinDate) {
+		this.joinDate = joinDate;
+	}
 
-    public LocalDate getJoinDate() {
-        return joinDate;
-    }
+	public LocalDate getEndDate() {
+		return endDate;
+	}
 
-    public void setJoinDate(LocalDate joinDate) {
-        this.joinDate = joinDate;
-    }
+	public void setEndDate(LocalDate endDate) {
+		this.endDate = endDate;
+	}
 
-    public LocalDate getEndDate() {
-        return endDate;
-    }
+	public String getMembershipStatus() {
+		return membershipStatus;
+	}
 
-    public void setEndDate(LocalDate endDate) {
-        this.endDate = endDate;
-    }
+	public void setMembershipStatus(String membershipStatus) {
+		this.membershipStatus = membershipStatus;
+	}
 
-    public String getMembershipStatus() {
-        return membershipStatus;
-    }
+	public Admin getGymId() {
+		return gymId;
+	}
 
-    public void setMembershipStatus(String membershipStatus) {
-        this.membershipStatus = membershipStatus;
-    }
+	public void setGymId(Admin gymId) {
+		this.gymId = gymId;
+	}
 
-    public Admin getGymId() {
-        return gymId;
-    }
+	public long getDaysLeft() {
+		return daysLeft;
+	}
 
-    public void setGymId(Admin gymId) {
-        this.gymId = gymId;
-    }
+	public void setDaysLeft(long daysLeft) {
+		this.daysLeft = daysLeft;
+	}
 }

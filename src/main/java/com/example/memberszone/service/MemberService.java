@@ -41,15 +41,13 @@ public class MemberService {
 		member.setFeesStatus(memberDto.getFeesStatus());
 		member.setPaymentMethod(memberDto.getPaymentMethod());
 		member.setPlanName(memberDto.getPlanName());
+		member.setJoinDate(LocalDate.now());
 
 		// Set the gymId using the provided gym ID in DTO
 		Admin gym = adminRepository.findById(memberDto.getGymId())
 				.orElseThrow(() -> new RuntimeException("Gym not found"));
-		
-		member.setGymId(gym);
 
-		// Set joinDate to current date
-		member.setJoinDate(LocalDate.now());
+		member.setGymId(gym);
 
 		// Calculate plan duration based on gymId and plan name
 		int planMonths = calculatePlanDuration(memberDto.getGymId(), memberDto.getPlanName());
@@ -58,6 +56,14 @@ public class MemberService {
 		// status
 		calculateEndDate(member, planMonths);
 
+		if (member.getEndDate() != null) {
+			long daysLeft = calculateDaysLeft(member.getEndDate());
+			member.setDaysLeft(daysLeft);
+		} else {
+			member.setDaysLeft(0); // Handle missing endDate edge case
+		}
+
+		updateMembershipStatus(member);
 		// Save the member to the database
 		memberRepository.save(member);
 	}
@@ -75,7 +81,23 @@ public class MemberService {
 	private void calculateEndDate(Member member, int planMonths) {
 		// Calculate the end date based on the join date and plan duration
 		member.setEndDate(member.getJoinDate().plus(planMonths, ChronoUnit.MONTHS));
+
+		// Calculate days left and set it
+		if (member.getEndDate() != null) {
+			long daysLeft = calculateDaysLeft(member.getEndDate());
+			member.setDaysLeft(daysLeft);
+		} else {
+			member.setDaysLeft(0); // If no endDate is set, daysLeft is 0
+		}
 		updateMembershipStatus(member);
+	}
+
+	public long calculateDaysLeft(LocalDate endDate) {
+		LocalDate currentDate = LocalDate.now();
+		if (endDate.isBefore(currentDate)) {
+			return 0;
+		}
+		return ChronoUnit.DAYS.between(currentDate, endDate);
 	}
 
 	private void updateMembershipStatus(Member member) {
@@ -101,51 +123,36 @@ public class MemberService {
 		return dto;
 	}
 	// Method to get all members by gym ID
-    
-	  
-	 // Fetch members by gym ID
-    public List<MemberDto> getAllMembersByGymId(Long gymId) {
-        // Fetch the Admin entity based on gymId
-        Admin gymAdmin = adminRepository.findById(gymId)
-                                        .orElseThrow(() -> new IllegalArgumentException("Invalid gym ID"));
 
-        // Fetch members associated with the Admin entity
-        List<Member> members = memberRepository.findByGymId(gymAdmin);
-        return members.stream().map(this::convertToDto).collect(Collectors.toList());
-    }
+	// Fetch members by gym ID
+	public List<MemberDto> getAllMembersByGymId(Long gymId) {
+		// Fetch the Admin entity based on gymId
+		Admin gymAdmin = adminRepository.findById(gymId)
+				.orElseThrow(() -> new IllegalArgumentException("Invalid gym ID"));
 
-    // Convert Member entity to MemberDto
-    private MemberDto convertToDto(Member member) {
-        MemberDto memberDto = new MemberDto();
-        memberDto.setId(member.getId());
-        memberDto.setName(member.getName());
-        memberDto.setEmail(member.getEmail());
-        memberDto.setPhone(member.getPhone() != null ? member.getPhone() : "No phone number");
-        memberDto.setAddress(member.getAddress());
-        memberDto.setFeesStatus(member.getFeesStatus());
-        memberDto.setPaymentMethod(member.getPaymentMethod());
-        memberDto.setPlanName(member.getPlanName());
-        memberDto.setJoinDate(member.getJoinDate());
-        memberDto.setEndDate(member.getEndDate());
-        memberDto.setMembershipStatus(member.getMembershipStatus());
+		// Fetch members associated with the Admin entity
+		List<Member> members = memberRepository.findByGymId(gymAdmin);
+		return members.stream().map(this::convertToDto).collect(Collectors.toList());
+	}
 
-        // Calculate days left
-        if (member.getEndDate() != null) {
-            long daysLeft = calculateDaysLeft(member.getEndDate());
-            memberDto.setDaysLeft(daysLeft);
-        } else {
-            memberDto.setDaysLeft(0);
-        }
+	// Convert Member entity to MemberDto
+	private MemberDto convertToDto(Member member) {
+		MemberDto memberDto = new MemberDto();
+		memberDto.setId(member.getId());
+		memberDto.setName(member.getName());
+		memberDto.setEmail(member.getEmail());
+		memberDto.setPhone(member.getPhone() != null ? member.getPhone() : "No phone number");
+		memberDto.setAddress(member.getAddress());
+		memberDto.setFeesStatus(member.getFeesStatus());
+		memberDto.setPaymentMethod(member.getPaymentMethod());
+		memberDto.setPlanName(member.getPlanName());
+		memberDto.setJoinDate(member.getJoinDate());
+		memberDto.setEndDate(member.getEndDate());
+		memberDto.setMembershipStatus(member.getMembershipStatus());
 
-        return memberDto;
-    }
+		memberDto.setDaysLeft(member.getDaysLeft());
 
-    // Method to calculate days left based on end date
-    public long calculateDaysLeft(LocalDate endDate) {
-        LocalDate currentDate = LocalDate.now();
-        if (endDate.isBefore(currentDate)) {
-            return 0;
-        }
-        return ChronoUnit.DAYS.between(currentDate, endDate);
-    }
+		return memberDto;
+	}
+
 }
