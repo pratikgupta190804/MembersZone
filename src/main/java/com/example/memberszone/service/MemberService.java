@@ -155,4 +155,10 @@ public class MemberService {
 		return memberDto;
 	}
 
+	public MemberDto getMemberById(Long id) {
+		Member member = memberRepository.findById(id).orElseThrow(() -> new RuntimeException("Member not found"));
+
+		return convertToDto(member);
+	}
+
 }

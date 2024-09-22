@@ -2,11 +2,14 @@ package com.example.memberszone.controller;
 
 import java.util.List;
 
+import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -83,18 +86,8 @@ public class MemberController {
 
 	    // Fetch members based on gym ID
 	    List<MemberDto> members = memberService.getAllMembersByGymId(gymId);
-	    
-	    // Calculate days left for each member
-	    for (MemberDto member : members) {
-	        long daysLeft = 0;
-			try {
-				daysLeft = memberService.calculateDaysLeft(member.getEndDate());
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-	        member.setDaysLeft(daysLeft); // Assuming you have a setDaysLeft method in MemberDto
-	    }
+	    System.out.println(members);
+	 
 
 	    // Add attributes to the model
 	    model.addAttribute("members", members);
@@ -104,5 +97,17 @@ public class MemberController {
 	    // Return Thymeleaf template name
 	    return "view-members"; // Assuming the Thymeleaf template is named 'view-members.html'
 	}
+	
+	 @GetMapping("/view-members/{id}")
+	    public ResponseEntity<MemberDto> getMemberById(@PathVariable Long id) {
+	        // Assume MemberService has a method getMemberById(id)
+	        MemberDto member = memberService.getMemberById(id);
+
+	        if (member != null) {
+	            return ResponseEntity.ok(member);
+	        } else {
+	            return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body(null);
+	        }
+	    }
 
 }

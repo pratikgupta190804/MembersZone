@@ -11,7 +11,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
+
 
 @Entity
 @Table(name = "members")
@@ -22,7 +22,7 @@ public class Member {
 	private Long id;
 
 	private String name;
-	@Column(name = "daysleft")		
+	@Column(name = "daysleft")
 	private long daysLeft;
 
 	private String email;

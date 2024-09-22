@@ -1,79 +1,35 @@
-$(document).ready(function() {
-        // Handle clicking the 'Update' button
-        $('.update-trainer').on('click', function() {
-            var trainerId = $(this).data('id');
-            
-            // Fetch trainer details via AJAX
-            $.get('/fetch-trainer/' + trainerId, function(data) {
-                $('#updateId').val(data.trainerId);
-                $('#name').val(data.name);
-                $('#email').val(data.email);
-                $('#phoneNumber').val(data.phoneNumber);
-                $('#specialization').val(data.specialization);
-                $('#experience').val(data.experience);
-                $('#certification').val(data.certification);
-                
-                // Show the modal
-                $('#updateModal').modal('show');
-            });
-        });
+document.addEventListener("DOMContentLoaded", function() {
+	const viewButtons = document.querySelectorAll(".btn-view-member");
 
-        // Handle form submission for updating the trainer
-        $('#updateForm').on('submit', function(e) {
-            e.preventDefault();
-            var formData = new FormData(this);
-            $.ajax({
-                url: '/update-trainer',
-                method: 'POST',
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function(response) {
-                    // Find the updated trainer card and update its content
-                    var updatedTrainerId = $('#updateId').val();
-                    var $card = $('button.update-trainer[data-id="' + updatedTrainerId + '"]').closest('.card');
-                    $card.find('.card-title').text($('#name').val());
-                    $card.find('.card-text').eq(0).find('span').text($('#email').val());
-                    $card.find('.card-text').eq(1).find('span').text($('#phoneNumber').val());
-                    $card.find('.card-text').eq(2).find('span').text($('#specialization').val());
-                    $card.find('.card-text').eq(3).find('span').text($('#experience').val() + ' years');
-                    $card.find('.card-text').eq(4).find('a').attr('href', $('#certification').val());
-                    $card.find('.card-img-top').attr('src', response.imageUrl);
+	viewButtons.forEach(button => {
+		button.addEventListener("click", function() {
+			// Use getAttribute to fetch the th:data-id value
+			const memberId = this.getAttribute("data-id");
 
-                    // Hide the modal
-                    $('#updateModal').modal('hide');
-                    alert('Trainer updated successfully');
-                },
-                error: function(xhr) {
-                    alert('Error updating trainer: ' + xhr.responseText);
-                }
-            });
-        });
+			// Correct the URL to use memberId
+			fetch(`/view-members/${memberId}`)
+				.then(response => response.json())
+				.then(member => {
+					console.log(member); // Log the fetched member data
 
-        // Handle clicking the 'Delete' button
-        $('.delete-trainer').on('click', function() {
-            var trainerId = $(this).data('id');
-            $('#deleteConfirmation .delete-confirm').attr('data-id', trainerId);
-            $('#deleteConfirmation').modal('show');
-        });
+					// Populate the modal with member's data
+					document.getElementById("modal-member-name").textContent = member.name;
+					document.getElementById("modal-member-email").textContent = member.email;
+					document.getElementById("modal-member-phone").textContent = member.phone;
+					document.getElementById("modal-member-address").textContent = member.address;
+					document.getElementById("modal-member-plan").textContent = member.planName;
+					document.getElementById("modal-member-joinDate").textContent = member.joinDate;
+					document.getElementById("modal-member-endDate").textContent = member.endDate;
+					document.getElementById("modal-member-status").textContent = member.membershipStatus;
+					document.getElementById("modal-member-daysLeft").textContent = member.daysLeft;
 
-        // Handle confirming the deletion
-        $('.delete-confirm').on('click', function() {
-            var trainerId = $(this).data('id');
-            $.ajax({
-                url: '/delete-trainer/' + trainerId,
-                method: 'DELETE',
-                success: function(response) {
-                    // Remove the card from the page without reloading
-                    $('button.delete-trainer[data-id="' + trainerId + '"]').closest('.card').remove();
-
-                    // Hide the modal
-                    $('#deleteConfirmation').modal('hide');
-                    alert('Trainer deleted successfully');
-                },
-                error: function() {
-                    alert('Error deleting trainer.');
-                }
-            });
-        });
-    });
+					// Show the modal
+					const modal = new bootstrap.Modal(document.getElementById("memberModal"));
+					modal.show();
+				})
+				.catch(error => {
+					console.error("Error fetching member details:", error);
+				});
+		});
+	});
+});
